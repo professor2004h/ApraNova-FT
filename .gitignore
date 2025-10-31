@@ -1,0 +1,6 @@
+.env
+**/__pycache__/
+**/*.pyc
+frontend/.next
+node_modules
+pgdata/

@@ -17,13 +17,39 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Convert code blocks with language-mermaid to mermaid divs
-            document.querySelectorAll('pre code.language-mermaid, pre code.language-mermaid').forEach(function(block) {
-                const pre = block.parentElement;
-                const mermaidDiv = document.createElement('div');
-                mermaidDiv.className = 'mermaid';
-                mermaidDiv.textContent = block.textContent;
-                pre.parentElement.replaceChild(mermaidDiv, pre);
+            // Find all code blocks that contain mermaid diagrams
+            // Check multiple selectors to catch all variations
+            const selectors = [
+                'pre code.language-mermaid',
+                'pre code[class*="mermaid"]',
+                'code.language-mermaid',
+                'pre:has(code:contains("sequenceDiagram"))',
+                'pre:has(code:contains("graph "))',
+                'pre:has(code:contains("stateDiagram"))',
+                'pre:has(code:contains("erDiagram"))'
+            ];
+
+            // Convert all code blocks containing mermaid syntax
+            document.querySelectorAll('pre').forEach(function(pre) {
+                const code = pre.querySelector('code');
+                if (!code) return;
+
+                const text = code.textContent.trim();
+
+                // Check if this looks like a mermaid diagram
+                const isMermaid = text.startsWith('sequenceDiagram') ||
+                                text.startsWith('graph ') ||
+                                text.startsWith('stateDiagram') ||
+                                text.startsWith('erDiagram') ||
+                                text.startsWith('flowchart') ||
+                                code.className.includes('mermaid');
+
+                if (isMermaid) {
+                    const mermaidDiv = document.createElement('div');
+                    mermaidDiv.className = 'mermaid';
+                    mermaidDiv.textContent = text;
+                    pre.parentElement.replaceChild(mermaidDiv, pre);
+                }
             });
 
             // Initialize Mermaid with dark purple theme

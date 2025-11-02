@@ -21,77 +21,89 @@ title: System Architecture - ApraNova LMS
 
 ---
 
-## 🏗️ High-Level Architecture
+## 🏗️ System Architecture Diagram
 
 ```mermaid
 graph TB
-    subgraph "Presentation Layer"
-        UI[React Components]
-        Pages[Next.js Pages]
-        Middleware[Next.js Middleware]
+    subgraph CLIENT["CLIENT LAYER"]
+        WEB["Web Browser"]
+        NEXTJS["Next.js Application<br/>Port 3000"]
     end
 
-    subgraph "Application Layer"
-        APIClient[Axios API Client]
-        AuthContext[Auth Context]
-        Services[Service Layer]
+    subgraph FRONTEND["FRONTEND LAYER"]
+        MOBILE["Mobile Browser"]
+        ANCHANCA["Anchanca Service"]
     end
 
-    subgraph "API Gateway"
-        NextAPI[Next.js API Routes<br/>Proxy Layer]
-        CORS[CORS Handler]
+    subgraph BACKEND["BACKEND LAYER"]
+        DJANGO["Django REST API<br/>Port 8000"]
+        AUTOMATION["Automation Service"]
+        WORKSPACE["Workspace Service"]
     end
 
-    subgraph "Backend Services"
-        DjangoAPI[Django REST API]
-        AuthService[Authentication Service]
-        WorkspaceService[Workspace Service]
-        PaymentService[Payment Service]
-        UserService[User Service]
+    subgraph EXTERNAL["EXTERNAL SERVICES"]
+        STRIPE["Stripe API"]
+        GOOGLE["Google OAuth"]
+        GITHUB["GitHub OAuth"]
     end
 
-    subgraph "Data Access Layer"
-        ORM[Django ORM]
-        CacheManager[Redis Cache Manager]
-        FileStorage[File Storage]
+    subgraph DATA["DATA LAYER"]
+        POSTGRES["PostgreSQL<br/>Port 5433"]
+        REDIS["Redis<br/>Port 6380"]
+        DOCKER["Docker"]
     end
 
-    subgraph "Infrastructure"
-        DB[(PostgreSQL)]
-        Cache[(Redis)]
-        Docker[Docker Engine]
-        Storage[Volume Storage]
+    subgraph WORKSPACES["WORKSPACE LAYER"]
+        CS1["Code-Server 1"]
+        CS2["Code-Server 2"]
+        CSN["Code-Server N"]
     end
 
-    UI --> Pages
-    Pages --> Middleware
-    Middleware --> APIClient
-    APIClient --> AuthContext
-    APIClient --> Services
-    Services --> NextAPI
-    NextAPI --> CORS
-    CORS --> DjangoAPI
-    
-    DjangoAPI --> AuthService
-    DjangoAPI --> WorkspaceService
-    DjangoAPI --> PaymentService
-    DjangoAPI --> UserService
-    
-    AuthService --> ORM
-    WorkspaceService --> Docker
-    PaymentService --> ORM
-    UserService --> ORM
-    
-    ORM --> DB
-    CacheManager --> Cache
-    FileStorage --> Storage
-    WorkspaceService --> Storage
+    WEB -->|SSR/Routes| NEXTJS
+    NEXTJS -->|API Calls| DJANGO
+    MOBILE --> ANCHANCA
+    ANCHANCA --> DJANGO
 
-    style UI fill:#61dafb,stroke:#333,stroke-width:2px
-    style DjangoAPI fill:#092e20,stroke:#333,stroke-width:2px,color:#fff
-    style DB fill:#336791,stroke:#333,stroke-width:2px,color:#fff
-    style Cache fill:#dc382d,stroke:#333,stroke-width:2px,color:#fff
-    style Docker fill:#2496ed,stroke:#333,stroke-width:2px,color:#fff
+    DJANGO --> STRIPE
+    DJANGO --> GOOGLE
+    DJANGO --> GITHUB
+
+    DJANGO --> POSTGRES
+    DJANGO --> REDIS
+
+    AUTOMATION --> WORKSPACE
+    WORKSPACE --> DOCKER
+
+    DOCKER --> CS1
+    DOCKER --> CS2
+    DOCKER --> CSN
+
+    POSTGRES -.-> DOCKER
+    REDIS -.-> DOCKER
+
+    style CLIENT fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style FRONTEND fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style BACKEND fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style EXTERNAL fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style DATA fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style WORKSPACES fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+
+    style WEB fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style NEXTJS fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style MOBILE fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style ANCHANCA fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style DJANGO fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style AUTOMATION fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style WORKSPACE fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style STRIPE fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style GOOGLE fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style GITHUB fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style POSTGRES fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style REDIS fill:#8b0000,stroke:#dc382d,stroke-width:2px,color:#dc382d
+    style DOCKER fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style CS1 fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style CS2 fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style CSN fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 ---
@@ -109,48 +121,61 @@ graph TB
 ### Frontend Component Diagram
 
 ```mermaid
-graph LR
-    subgraph "Frontend Components"
-        App[App Router]
-        Layout[Layout Components]
-        Pages[Page Components]
-        Auth[Auth Components]
-        Dashboard[Dashboard Components]
-        Workspace[Workspace Components]
+graph TB
+    subgraph COMPONENTS["FRONTEND COMPONENTS"]
+        APP["App Router"]
+        LAYOUT["Layout Components"]
+        PAGES["Page Components"]
+        AUTH["Auth Components"]
+        DASHBOARD["Dashboard Components"]
+        WORKSPACE["Workspace Components"]
     end
 
-    subgraph "State Management"
-        Context[React Context]
-        LocalStorage[Local Storage]
-        SessionStorage[Session Storage]
+    subgraph STATE["STATE MANAGEMENT"]
+        CONTEXT["React Context"]
+        LOCAL["Local Storage"]
+        SESSION["Session Storage"]
     end
 
-    subgraph "API Layer"
-        APIClient[Axios Client]
-        Interceptors[Request/Response Interceptors]
-        Services[Service Functions]
+    subgraph API["API LAYER"]
+        CLIENT["Axios Client"]
+        INTERCEPTORS["Request/Response<br/>Interceptors"]
+        SERVICES["Service Functions"]
     end
 
-    App --> Layout
-    Layout --> Pages
-    Pages --> Auth
-    Pages --> Dashboard
-    Pages --> Workspace
-    
-    Auth --> Context
-    Dashboard --> Context
-    Workspace --> Context
-    
-    Context --> LocalStorage
-    Context --> SessionStorage
-    
-    Pages --> Services
-    Services --> APIClient
-    APIClient --> Interceptors
+    APP --> LAYOUT
+    LAYOUT --> PAGES
+    PAGES --> AUTH
+    PAGES --> DASHBOARD
+    PAGES --> WORKSPACE
 
-    style App fill:#61dafb,stroke:#333,stroke-width:2px
-    style Context fill:#764abc,stroke:#333,stroke-width:2px,color:#fff
-    style APIClient fill:#5ed3f3,stroke:#333,stroke-width:2px
+    AUTH --> CONTEXT
+    DASHBOARD --> CONTEXT
+    WORKSPACE --> CONTEXT
+
+    CONTEXT --> LOCAL
+    CONTEXT --> SESSION
+
+    PAGES --> SERVICES
+    SERVICES --> CLIENT
+    CLIENT --> INTERCEPTORS
+
+    style COMPONENTS fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style STATE fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style API fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+
+    style APP fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style LAYOUT fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style PAGES fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style AUTH fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style DASHBOARD fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style WORKSPACE fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style CONTEXT fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style LOCAL fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style SESSION fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style CLIENT fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style INTERCEPTORS fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style SERVICES fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; margin: 25px 0; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2); color: white;">
@@ -165,53 +190,68 @@ graph LR
 
 ```mermaid
 graph TB
-    subgraph "API Layer"
-        URLs[URL Router]
-        Views[API Views]
-        Serializers[Serializers]
+    subgraph APILAYER["API LAYER"]
+        URLS["URL Router"]
+        VIEWS["API Views"]
+        SERIALIZERS["Serializers"]
     end
 
-    subgraph "Business Logic"
-        AuthLogic[Authentication Logic]
-        WorkspaceLogic[Workspace Logic]
-        PaymentLogic[Payment Logic]
-        UserLogic[User Logic]
+    subgraph LOGIC["BUSINESS LOGIC"]
+        AUTHLOGIC["Authentication Logic"]
+        WORKSPACELOGIC["Workspace Logic"]
+        PAYMENTLOGIC["Payment Logic"]
+        USERLOGIC["User Logic"]
     end
 
-    subgraph "Data Layer"
-        Models[Django Models]
-        Migrations[Database Migrations]
-        Managers[Model Managers]
+    subgraph DATALAYER["DATA LAYER"]
+        MODELS["Django Models"]
+        MIGRATIONS["Database Migrations"]
+        MANAGERS["Model Managers"]
     end
 
-    subgraph "External Integrations"
-        DockerAPI[Docker API]
-        StripeAPI[Stripe API]
-        OAuth[OAuth Providers]
+    subgraph INTEGRATIONS["EXTERNAL INTEGRATIONS"]
+        DOCKERAPI["Docker API"]
+        STRIPEAPI["Stripe API"]
+        OAUTH["OAuth Providers"]
     end
 
-    URLs --> Views
-    Views --> Serializers
-    Serializers --> AuthLogic
-    Serializers --> WorkspaceLogic
-    Serializers --> PaymentLogic
-    Serializers --> UserLogic
-    
-    AuthLogic --> Models
-    WorkspaceLogic --> Models
-    PaymentLogic --> Models
-    UserLogic --> Models
-    
-    Models --> Migrations
-    Models --> Managers
-    
-    WorkspaceLogic --> DockerAPI
-    PaymentLogic --> StripeAPI
-    AuthLogic --> OAuth
+    URLS --> VIEWS
+    VIEWS --> SERIALIZERS
+    SERIALIZERS --> AUTHLOGIC
+    SERIALIZERS --> WORKSPACELOGIC
+    SERIALIZERS --> PAYMENTLOGIC
+    SERIALIZERS --> USERLOGIC
 
-    style URLs fill:#092e20,stroke:#333,stroke-width:2px,color:#fff
-    style Models fill:#44b78b,stroke:#333,stroke-width:2px,color:#fff
-    style DockerAPI fill:#2496ed,stroke:#333,stroke-width:2px,color:#fff
+    AUTHLOGIC --> MODELS
+    WORKSPACELOGIC --> MODELS
+    PAYMENTLOGIC --> MODELS
+    USERLOGIC --> MODELS
+
+    MODELS --> MIGRATIONS
+    MODELS --> MANAGERS
+
+    WORKSPACELOGIC --> DOCKERAPI
+    PAYMENTLOGIC --> STRIPEAPI
+    AUTHLOGIC --> OAUTH
+
+    style APILAYER fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style LOGIC fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style DATALAYER fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style INTEGRATIONS fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+
+    style URLS fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style VIEWS fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style SERIALIZERS fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style AUTHLOGIC fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style WORKSPACELOGIC fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style PAYMENTLOGIC fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style USERLOGIC fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style MODELS fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style MIGRATIONS fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style MANAGERS fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style DOCKERAPI fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style STRIPEAPI fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style OAUTH fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 ---
@@ -275,41 +315,53 @@ sequenceDiagram
 
 ```mermaid
 graph LR
-    subgraph "Client Side"
-        Form[User Form]
-        State[Component State]
+    subgraph CLIENT["CLIENT SIDE"]
+        FORM["User Form"]
+        STATE["Component State"]
     end
 
-    subgraph "API Layer"
-        Validation[Client Validation]
-        Request[API Request]
+    subgraph APILAYER["API LAYER"]
+        VALIDATION["Client Validation"]
+        REQUEST["API Request"]
     end
 
-    subgraph "Server Side"
-        Serializer[DRF Serializer]
-        BusinessLogic[Business Logic]
-        Model[Django Model]
+    subgraph SERVER["SERVER SIDE"]
+        SERIALIZER["DRF Serializer"]
+        BUSINESSLOGIC["Business Logic"]
+        MODEL["Django Model"]
     end
 
-    subgraph "Storage"
-        DB[(Database)]
-        Cache[(Cache)]
-        Files[File Storage]
+    subgraph STORAGE["STORAGE"]
+        DB[("Database")]
+        CACHE[("Cache")]
+        FILES["File Storage"]
     end
 
-    Form --> State
-    State --> Validation
-    Validation --> Request
-    Request --> Serializer
-    Serializer --> BusinessLogic
-    BusinessLogic --> Model
-    Model --> DB
-    BusinessLogic --> Cache
-    BusinessLogic --> Files
+    FORM --> STATE
+    STATE --> VALIDATION
+    VALIDATION --> REQUEST
+    REQUEST --> SERIALIZER
+    SERIALIZER --> BUSINESSLOGIC
+    BUSINESSLOGIC --> MODEL
+    MODEL --> DB
+    BUSINESSLOGIC --> CACHE
+    BUSINESSLOGIC --> FILES
 
-    style Form fill:#61dafb,stroke:#333,stroke-width:2px
-    style Serializer fill:#092e20,stroke:#333,stroke-width:2px,color:#fff
-    style DB fill:#336791,stroke:#333,stroke-width:2px,color:#fff
+    style CLIENT fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style APILAYER fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style SERVER fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style STORAGE fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+
+    style FORM fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style STATE fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style VALIDATION fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style REQUEST fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style SERIALIZER fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style BUSINESSLOGIC fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style MODEL fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style DB fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style CACHE fill:#8b0000,stroke:#dc382d,stroke-width:2px,color:#dc382d
+    style FILES fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 ---
@@ -318,53 +370,66 @@ graph LR
 
 ```mermaid
 graph TB
-    subgraph "Docker Host"
-        subgraph "ApraNova Network"
-            Frontend[Frontend Container<br/>Next.js:3000]
-            Backend[Backend Container<br/>Django:8000]
-            DB[PostgreSQL Container<br/>:5432]
-            Redis[Redis Container<br/>:6379]
+    subgraph DOCKERHOST["DOCKER HOST"]
+        subgraph NETWORK["APRANOVA NETWORK"]
+            FRONTEND["Frontend Container<br/>Next.js:3000"]
+            BACKEND["Backend Container<br/>Django:8000"]
+            DBCONTAINER["PostgreSQL Container<br/>Port 5433"]
+            REDISCONTAINER["Redis Container<br/>Port 6380"]
         end
-        
-        subgraph "Workspace Containers"
-            WS1[Workspace 1<br/>Code-Server]
-            WS2[Workspace 2<br/>Code-Server]
-            WSN[Workspace N<br/>Code-Server]
+
+        subgraph WORKSPACES["WORKSPACE CONTAINERS"]
+            WS1["Workspace 1<br/>Code-Server"]
+            WS2["Workspace 2<br/>Code-Server"]
+            WSN["Workspace N<br/>Code-Server"]
         end
-        
-        DockerSocket[Docker Socket<br/>/var/run/docker.sock]
+
+        DOCKERSOCKET["Docker Socket<br/>/var/run/docker.sock"]
     end
 
-    subgraph "Volumes"
-        PGData[postgres_data]
-        RedisData[redis_data]
-        StaticFiles[static_volume]
-        MediaFiles[media_volume]
-        WorkspaceData[workspace_data]
+    subgraph VOLUMES["VOLUMES"]
+        PGDATA["postgres_data"]
+        REDISDATA["redis_data"]
+        STATICFILES["static_volume"]
+        MEDIAFILES["media_volume"]
+        WORKSPACEDATA["workspace_data"]
     end
 
-    Frontend --> Backend
-    Backend --> DB
-    Backend --> Redis
-    Backend --> DockerSocket
-    
-    DockerSocket --> WS1
-    DockerSocket --> WS2
-    DockerSocket --> WSN
-    
-    DB --> PGData
-    Redis --> RedisData
-    Backend --> StaticFiles
-    Backend --> MediaFiles
-    WS1 --> WorkspaceData
-    WS2 --> WorkspaceData
-    WSN --> WorkspaceData
+    FRONTEND --> BACKEND
+    BACKEND --> DBCONTAINER
+    BACKEND --> REDISCONTAINER
+    BACKEND --> DOCKERSOCKET
 
-    style Frontend fill:#61dafb,stroke:#333,stroke-width:2px
-    style Backend fill:#092e20,stroke:#333,stroke-width:2px,color:#fff
-    style DB fill:#336791,stroke:#333,stroke-width:2px,color:#fff
-    style Redis fill:#dc382d,stroke:#333,stroke-width:2px,color:#fff
-    style DockerSocket fill:#2496ed,stroke:#333,stroke-width:2px,color:#fff
+    DOCKERSOCKET --> WS1
+    DOCKERSOCKET --> WS2
+    DOCKERSOCKET --> WSN
+
+    DBCONTAINER --> PGDATA
+    REDISCONTAINER --> REDISDATA
+    BACKEND --> STATICFILES
+    BACKEND --> MEDIAFILES
+    WS1 --> WORKSPACEDATA
+    WS2 --> WORKSPACEDATA
+    WSN --> WORKSPACEDATA
+
+    style DOCKERHOST fill:#000,stroke:#9b4dca,stroke-width:3px,color:#fff
+    style NETWORK fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style WORKSPACES fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style VOLUMES fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+
+    style FRONTEND fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style BACKEND fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style DBCONTAINER fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style REDISCONTAINER fill:#8b0000,stroke:#dc382d,stroke-width:2px,color:#dc382d
+    style DOCKERSOCKET fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style WS1 fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style WS2 fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style WSN fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style PGDATA fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style REDISDATA fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style STATICFILES fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style MEDIAFILES fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
+    style WORKSPACEDATA fill:#9b4dca,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 ---
@@ -399,49 +464,61 @@ graph TB
 
 ```mermaid
 graph TB
-    LB[Load Balancer]
-    
-    subgraph "Frontend Cluster"
-        FE1[Frontend 1]
-        FE2[Frontend 2]
-        FE3[Frontend N]
+    LB["Load Balancer"]
+
+    subgraph FECLUSTER["FRONTEND CLUSTER"]
+        FE1["Frontend 1"]
+        FE2["Frontend 2"]
+        FE3["Frontend N"]
     end
-    
-    subgraph "Backend Cluster"
-        BE1[Backend 1]
-        BE2[Backend 2]
-        BE3[Backend N]
+
+    subgraph BECLUSTER["BACKEND CLUSTER"]
+        BE1["Backend 1"]
+        BE2["Backend 2"]
+        BE3["Backend N"]
     end
-    
-    subgraph "Data Layer"
-        DBMaster[(DB Master)]
-        DBReplica1[(DB Replica 1)]
-        DBReplica2[(DB Replica 2)]
-        RedisCluster[(Redis Cluster)]
+
+    subgraph DATALAYER["DATA LAYER"]
+        DBMASTER[("DB Master")]
+        DBREPLICA1[("DB Replica 1")]
+        DBREPLICA2[("DB Replica 2")]
+        REDISCLUSTER[("Redis Cluster")]
     end
 
     LB --> FE1
     LB --> FE2
     LB --> FE3
-    
+
     FE1 --> BE1
     FE2 --> BE2
     FE3 --> BE3
-    
-    BE1 --> DBMaster
-    BE2 --> DBMaster
-    BE3 --> DBMaster
-    
-    DBMaster --> DBReplica1
-    DBMaster --> DBReplica2
-    
-    BE1 --> RedisCluster
-    BE2 --> RedisCluster
-    BE3 --> RedisCluster
 
-    style LB fill:#f9f,stroke:#333,stroke-width:4px
-    style DBMaster fill:#336791,stroke:#333,stroke-width:2px,color:#fff
-    style RedisCluster fill:#dc382d,stroke:#333,stroke-width:2px,color:#fff
+    BE1 --> DBMASTER
+    BE2 --> DBMASTER
+    BE3 --> DBMASTER
+
+    DBMASTER --> DBREPLICA1
+    DBMASTER --> DBREPLICA2
+
+    BE1 --> REDISCLUSTER
+    BE2 --> REDISCLUSTER
+    BE3 --> REDISCLUSTER
+
+    style FECLUSTER fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style BECLUSTER fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+    style DATALAYER fill:#9b4dca,stroke:#7b3da6,stroke-width:3px,color:#fff
+
+    style LB fill:#9b4dca,stroke:#fff,stroke-width:4px,color:#fff
+    style FE1 fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style FE2 fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style FE3 fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style BE1 fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style BE2 fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style BE3 fill:#1e3a5f,stroke:#0fa,stroke-width:2px,color:#0fa
+    style DBMASTER fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style DBREPLICA1 fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style DBREPLICA2 fill:#1e3a5f,stroke:#61dafb,stroke-width:2px,color:#61dafb
+    style REDISCLUSTER fill:#8b0000,stroke:#dc382d,stroke-width:2px,color:#dc382d
 ```
 
 ---

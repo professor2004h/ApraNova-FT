@@ -1,313 +1,212 @@
 ---
 layout: default
-title: ApraNova LMS - Technical Documentation
+title: ApraNova - System Documentation
 ---
 
-<div style="text-align: center; padding: 40px 0 20px 0;">
-  <h1 style="font-size: 3em; margin-bottom: 10px; color: #2c3e50;">🎓 ApraNova LMS</h1>
-  <h2 style="font-size: 1.5em; color: #7f8c8d; font-weight: 300;">Modern Learning Management System</h2>
-  <p style="font-size: 1.1em; color: #95a5a6; margin-top: 20px;">
-    Complete Technical Documentation & System Architecture
-  </p>
-</div>
+# ApraNova Learning Management System
+## Complete System Documentation
 
-<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px; color: white; margin: 30px 0;">
-  <h3 style="margin-top: 0; color: white;">🚀 What is ApraNova?</h3>
-  <p style="font-size: 1.1em; line-height: 1.6;">
-    ApraNova is a <strong>cloud-native Learning Management System</strong> that provides students with isolated, 
-    Docker-based VS Code workspaces, integrated payment processing, and multi-role authentication. 
-    Built with Django REST Framework and Next.js for maximum scalability and performance.
-  </p>
-</div>
+Welcome to the comprehensive documentation for ApraNova LMS - a modern, Docker-based learning management system built with Django REST Framework and Next.js.
 
 ---
 
-## 📚 Documentation Navigation
+## 📚 Documentation Index
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0;">
+### Architecture & Design
+- [System Architecture](./architecture.md) - Complete system overview and component interactions
+- [Database Schema](./database-schema.md) - Database design and relationships
+- [API Documentation](./api-documentation.md) - Complete API reference
 
-<div style="border: 2px solid #3498db; border-radius: 8px; padding: 20px; background: #f8f9fa;">
-  <h3 style="color: #3498db; margin-top: 0;">🏗️ Architecture & Design</h3>
-  <ul style="list-style: none; padding-left: 0;">
-    <li style="margin-bottom: 15px;">
-      📐 <a href="./architecture.html"><strong>System Architecture</strong></a><br/>
-      <small style="color: #7f8c8d;">Complete system overview with interactive diagrams</small>
-    </li>
-    <li style="margin-bottom: 15px;">
-      🗄️ <a href="./database-schema.html"><strong>Database Schema</strong></a><br/>
-      <small style="color: #7f8c8d;">ERD diagrams and table relationships</small>
-    </li>
-    <li style="margin-bottom: 15px;">
-      📡 <a href="./api-documentation.html"><strong>API Documentation</strong></a><br/>
-      <small style="color: #7f8c8d;">Complete REST API reference with examples</small>
-    </li>
-  </ul>
-</div>
+### Flow Diagrams
+- [Authentication Flow](./auth-flow.md) - User authentication and authorization
+- [Workspace Provisioning](./workspace-flow.md) - Docker-based workspace creation
+- [Payment Processing](./payment-flow.md) - Stripe payment integration
 
-<div style="border: 2px solid #9b59b6; border-radius: 8px; padding: 20px; background: #f8f9fa;">
-  <h3 style="color: #9b59b6; margin-top: 0;">🔄 Flow Diagrams</h3>
-  <ul style="list-style: none; padding-left: 0;">
-    <li style="margin-bottom: 15px;">
-      🔐 <a href="./auth-flow.html"><strong>Authentication Flow</strong></a><br/>
-      <small style="color: #7f8c8d;">JWT, OAuth, and social login flows</small>
-    </li>
-    <li style="margin-bottom: 15px;">
-      🐳 <a href="./workspace-flow.html"><strong>Workspace Provisioning</strong></a><br/>
-      <small style="color: #7f8c8d;">Docker-in-Docker workspace creation</small>
-    </li>
-    <li style="margin-bottom: 15px;">
-      💳 <a href="./payment-flow.html"><strong>Payment Processing</strong></a><br/>
-      <small style="color: #7f8c8d;">Stripe integration and payment flows</small>
-    </li>
-  </ul>
-</div>
+### Deployment & Operations
+- [Deployment Guide](./deployment.md) - Production deployment instructions
+- [Docker Setup](./docker-setup.md) - Container orchestration details
+- [Monitoring & Logging](./monitoring.md) - System monitoring and debugging
 
-</div>
+### Development
+- [Getting Started](./getting-started.md) - Quick start guide for developers
+- [Contributing](./contributing.md) - Contribution guidelines
+- [Testing Guide](./testing.md) - Testing strategies and examples
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Links
 
-<div style="background: #ecf0f1; padding: 20px; border-radius: 8px; border-left: 4px solid #e74c3c; margin: 20px 0;">
-  <p style="margin: 0;"><strong>📦 GitHub Repository:</strong> <a href="https://github.com/prempp/ApraNova" target="_blank">github.com/prempp/ApraNova</a></p>
-  <p style="margin: 10px 0 0 0;"><strong>🔧 Tech Stack:</strong> Django 5.2.7 • Next.js 15.2.4 • PostgreSQL 14 • Redis 7 • Docker</p>
-</div>
+- **GitHub Repository**: [ApraNova](https://github.com/your-org/apranova)
+- **Live Demo**: [demo.apranova.com](https://demo.apranova.com)
+- **API Swagger**: [api.apranova.com/swagger](https://api.apranova.com/swagger)
 
 ---
 
 ## 🏗️ System Overview
 
-<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-  <tr>
-    <td style="padding: 15px; border: 1px solid #ddd; background: #f8f9fa; width: 30%;"><strong>🎯 Purpose</strong></td>
-    <td style="padding: 15px; border: 1px solid #ddd;">Full-featured Learning Management System with Docker-based workspaces</td>
-  </tr>
-  <tr>
-    <td style="padding: 15px; border: 1px solid #ddd; background: #f8f9fa;"><strong>👥 User Roles</strong></td>
-    <td style="padding: 15px; border: 1px solid #ddd;">Student, Trainer, Admin, SuperAdmin</td>
-  </tr>
-  <tr>
-    <td style="padding: 15px; border: 1px solid #ddd; background: #f8f9fa;"><strong>🔐 Authentication</strong></td>
-    <td style="padding: 15px; border: 1px solid #ddd;">JWT Tokens, OAuth 2.0 (Google, GitHub)</td>
-  </tr>
-  <tr>
-    <td style="padding: 15px; border: 1px solid #ddd; background: #f8f9fa;"><strong>💻 Workspaces</strong></td>
-    <td style="padding: 15px; border: 1px solid #ddd;">Isolated Docker containers with VS Code (code-server)</td>
-  </tr>
-  <tr>
-    <td style="padding: 15px; border: 1px solid #ddd; background: #f8f9fa;"><strong>💳 Payments</strong></td>
-    <td style="padding: 15px; border: 1px solid #ddd;">Stripe API integration for course payments</td>
-  </tr>
-  <tr>
-    <td style="padding: 15px; border: 1px solid #ddd; background: #f8f9fa;"><strong>🗄️ Database</strong></td>
-    <td style="padding: 15px; border: 1px solid #ddd;">PostgreSQL 14 with Redis caching</td>
-  </tr>
-</table>
+ApraNova is a comprehensive Learning Management System featuring:
+
+- **Multi-Role Authentication**: Student, Trainer, Admin, SuperAdmin
+- **Docker-Based Workspaces**: Isolated VS Code environments for each student
+- **Payment Integration**: Stripe payment processing
+- **OAuth Support**: Google and GitHub authentication
+- **Real-time Updates**: WebSocket support for live notifications
+- **Scalable Architecture**: Microservices-ready design
 
 ---
 
 ## 🛠️ Technology Stack
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+### Backend
+- **Framework**: Django 5.2.7 + Django REST Framework
+- **Database**: PostgreSQL 14
+- **Cache**: Redis 7
+- **Authentication**: JWT + OAuth 2.0
+- **Payment**: Stripe API
+- **Containerization**: Docker + Docker-in-Docker
 
-<div style="background: #092e20; color: white; padding: 20px; border-radius: 8px;">
-  <h4 style="margin-top: 0; color: white;">⚙️ Backend</h4>
-  <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
-    <li>Django 5.2.7</li>
-    <li>Django REST Framework</li>
-    <li>PostgreSQL 14</li>
-    <li>Redis 7</li>
-    <li>JWT Authentication</li>
-    <li>Stripe API</li>
-  </ul>
-</div>
+### Frontend
+- **Framework**: Next.js 15.2.4 (App Router)
+- **UI Library**: React 19 + Tailwind CSS
+- **State Management**: React Context API
+- **HTTP Client**: Axios with interceptors
+- **Authentication**: JWT tokens in localStorage
 
-<div style="background: #61dafb; color: #000; padding: 20px; border-radius: 8px;">
-  <h4 style="margin-top: 0;">⚛️ Frontend</h4>
-  <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
-    <li>Next.js 15.2.4</li>
-    <li>React 19</li>
-    <li>Tailwind CSS</li>
-    <li>Axios</li>
-    <li>Context API</li>
-    <li>TypeScript Ready</li>
-  </ul>
-</div>
-
-<div style="background: #2496ed; color: white; padding: 20px; border-radius: 8px;">
-  <h4 style="margin-top: 0; color: white;">🐳 Infrastructure</h4>
-  <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
-    <li>Docker Compose</li>
-    <li>Docker-in-Docker</li>
-    <li>Nginx</li>
-    <li>Gunicorn</li>
-    <li>code-server</li>
-    <li>GitHub Actions</li>
-  </ul>
-</div>
-
-</div>
+### Infrastructure
+- **Orchestration**: Docker Compose
+- **Web Server**: Gunicorn (Backend), Node.js (Frontend)
+- **Reverse Proxy**: Nginx (Production)
+- **Code Server**: VS Code in browser for workspaces
 
 ---
 
-## 📊 High-Level Architecture
+## 📊 System Architecture Diagram
 
 ```mermaid
 graph TB
     subgraph "Client Layer"
-        Browser[🌐 Web Browser]
+        Browser[Web Browser]
+        Mobile[Mobile Browser]
     end
 
-    subgraph "Frontend - Next.js"
-        NextJS[Next.js App<br/>Port 3000]
+    subgraph "Frontend Layer"
+        NextJS[Next.js Application<br/>Port 3000]
+        NextJS --> |SSR/API Routes| NextAPI[Next.js API Routes]
     end
 
-    subgraph "Backend - Django"
-        API[REST API<br/>Port 8000]
-        Auth[🔐 Auth Service]
-        Workspace[🐳 Workspace Service]
-        Payment[💳 Payment Service]
+    subgraph "Backend Layer"
+        Django[Django REST API<br/>Port 8000]
+        Django --> Auth[Authentication Service]
+        Django --> Workspace[Workspace Service]
+        Django --> Payment[Payment Service]
     end
 
     subgraph "Data Layer"
-        DB[(PostgreSQL<br/>Port 5433)]
-        Cache[(Redis<br/>Port 6380)]
+        PostgreSQL[(PostgreSQL<br/>Port 5433)]
+        Redis[(Redis Cache<br/>Port 6380)]
     end
 
     subgraph "External Services"
-        Stripe[💳 Stripe]
-        OAuth[🔑 OAuth Providers]
+        Stripe[Stripe API]
+        Google[Google OAuth]
+        GitHub[GitHub OAuth]
     end
 
-    subgraph "Workspace Containers"
-        VS1[VS Code 1]
-        VS2[VS Code 2]
-        VSN[VS Code N...]
+    subgraph "Workspace Layer"
+        Docker[Docker Engine]
+        CodeServer1[Code-Server 1]
+        CodeServer2[Code-Server 2]
+        CodeServerN[Code-Server N]
     end
 
     Browser --> NextJS
-    NextJS --> API
-    API --> Auth
-    API --> Workspace
-    API --> Payment
+    Mobile --> NextJS
+    NextJS --> Django
     
-    Auth --> DB
-    Auth --> Cache
-    Auth --> OAuth
-    Workspace --> DB
-    Workspace --> VS1
-    Workspace --> VS2
-    Workspace --> VSN
+    Auth --> PostgreSQL
+    Auth --> Redis
+    Workspace --> Docker
     Payment --> Stripe
-    Payment --> DB
+    Auth --> Google
+    Auth --> GitHub
+    
+    Docker --> CodeServer1
+    Docker --> CodeServer2
+    Docker --> CodeServerN
+    
+    Workspace --> PostgreSQL
+    Payment --> PostgreSQL
 
-    style NextJS fill:#61dafb,stroke:#333,stroke-width:2px,color:#000
-    style API fill:#092e20,stroke:#333,stroke-width:2px,color:#fff
-    style DB fill:#336791,stroke:#333,stroke-width:2px,color:#fff
-    style Cache fill:#dc382d,stroke:#333,stroke-width:2px,color:#fff
-    style Stripe fill:#635bff,stroke:#333,stroke-width:2px,color:#fff
+    style NextJS fill:#61dafb,stroke:#333,stroke-width:2px
+    style Django fill:#092e20,stroke:#333,stroke-width:2px,color:#fff
+    style PostgreSQL fill:#336791,stroke:#333,stroke-width:2px,color:#fff
+    style Redis fill:#dc382d,stroke:#333,stroke-width:2px,color:#fff
+    style Docker fill:#2496ed,stroke:#333,stroke-width:2px,color:#fff
 ```
-
----
-
-## ✨ Key Features
-
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 20px 0;">
-
-<div style="border-left: 4px solid #3498db; padding: 15px; background: #f8f9fa;">
-  <h4 style="color: #3498db; margin-top: 0;">👨‍🎓 For Students</h4>
-  <ul style="margin: 0; padding-left: 20px;">
-    <li>Personal dashboard</li>
-    <li>Docker-based VS Code workspace</li>
-    <li>Project submissions</li>
-    <li>Course enrollment & payments</li>
-    <li>Progress tracking</li>
-  </ul>
-</div>
-
-<div style="border-left: 4px solid #9b59b6; padding: 15px; background: #f8f9fa;">
-  <h4 style="color: #9b59b6; margin-top: 0;">👨‍🏫 For Trainers</h4>
-  <ul style="margin: 0; padding-left: 20px;">
-    <li>Student management</li>
-    <li>Assignment creation</li>
-    <li>Grading system</li>
-    <li>Batch management</li>
-    <li>Progress analytics</li>
-  </ul>
-</div>
-
-<div style="border-left: 4px solid #e74c3c; padding: 15px; background: #f8f9fa;">
-  <h4 style="color: #e74c3c; margin-top: 0;">👨‍💼 For Admins</h4>
-  <ul style="margin: 0; padding-left: 20px;">
-    <li>User management</li>
-    <li>System configuration</li>
-    <li>Analytics & reporting</li>
-    <li>Payment management</li>
-    <li>Role-based access control</li>
-  </ul>
-</div>
-
-</div>
 
 ---
 
 ## 🔐 Security Features
 
-<div style="background: #fff3cd; border: 1px solid #ffc107; padding: 20px; border-radius: 8px; margin: 20px 0;">
-  <h4 style="margin-top: 0; color: #856404;">🛡️ Built-in Security</h4>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-    <div>✅ JWT Authentication</div>
-    <div>✅ CORS Protection</div>
-    <div>✅ CSRF Protection</div>
-    <div>✅ Password Hashing (bcrypt)</div>
-    <div>✅ Role-Based Access Control</div>
-    <div>✅ Docker Isolation</div>
-    <div>✅ HTTPS Ready</div>
-    <div>✅ Token Blacklisting</div>
-  </div>
-</div>
+- **JWT Authentication**: Secure token-based authentication
+- **CORS Protection**: Configured allowed origins
+- **CSRF Protection**: Django CSRF middleware
+- **Password Hashing**: bcrypt password hashing
+- **Role-Based Access Control**: Fine-grained permissions
+- **Docker Isolation**: Isolated workspace environments
+- **HTTPS Ready**: SSL/TLS support in production
 
 ---
 
-## 📖 Documentation Pages
+## 📈 Performance Features
 
-| Page | Description |
-|------|-------------|
-| [🏗️ Architecture](./architecture.html) | Complete system architecture with component diagrams |
-| [🔐 Authentication](./auth-flow.html) | JWT, OAuth, and social login implementation |
-| [🐳 Workspaces](./workspace-flow.html) | Docker-in-Docker workspace provisioning |
-| [💳 Payments](./payment-flow.html) | Stripe payment integration and flows |
-| [📡 API Docs](./api-documentation.html) | Complete REST API reference |
-| [🗄️ Database](./database-schema.html) | Database schema and relationships |
+- **Redis Caching**: Fast data retrieval
+- **Database Indexing**: Optimized queries
+- **Static File Serving**: WhiteNoise for static files
+- **Connection Pooling**: Database connection optimization
+- **Lazy Loading**: Frontend code splitting
+- **Docker Volumes**: Persistent data storage
 
 ---
 
-## 🚦 Getting Started
+## 🎯 Key Features
 
-```bash
-# Clone the repository
-git clone https://github.com/prempp/ApraNova.git
-cd ApraNova
+### For Students
+- Personal dashboard with course progress
+- Docker-based VS Code workspace
+- Project submission system
+- Real-time notifications
+- Payment integration for courses
 
-# Start all services with Docker Compose
-docker-compose -f docker-compose.complete.yml up -d
+### For Trainers
+- Student management dashboard
+- Assignment creation and grading
+- Progress tracking
+- Batch management
 
-# Access the application
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8000
-# Admin Panel: http://localhost:8000/admin
-```
+### For Admins
+- User management
+- System configuration
+- Analytics and reporting
+- Payment management
 
 ---
 
-<div style="text-align: center; padding: 30px 0; background: #f8f9fa; border-radius: 8px; margin: 30px 0;">
-  <h3 style="color: #2c3e50;">📞 Need Help?</h3>
-  <p style="color: #7f8c8d;">
-    <a href="https://github.com/prempp/ApraNova/issues">Report an Issue</a> • 
-    <a href="https://github.com/prempp/ApraNova">View on GitHub</a>
-  </p>
-  <p style="color: #95a5a6; font-size: 0.9em; margin-top: 20px;">
-    Last Updated: 2025 • Version 1.0.0
-  </p>
-</div>
+## 📞 Support & Contact
+
+- **Documentation Issues**: [GitHub Issues](https://github.com/your-org/apranova/issues)
+- **Email Support**: support@apranova.com
+- **Community**: [Discord Server](https://discord.gg/apranova)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+
+---
+
+**Last Updated**: {{ site.time | date: '%B %d, %Y' }}
+
+**Version**: 1.0.0
 

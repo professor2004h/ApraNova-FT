@@ -1,25 +1,60 @@
 ---
 layout: default
-title: Database Schema
+title: Database Schema - ApraNova LMS
 ---
 
-# Database Schema
+<div style="text-align: center; padding: 30px 0 20px 0;">
+  <h1 style="font-size: 3em; margin-bottom: 10px; background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🗄️ Database Schema</h1>
+  <p style="font-size: 1.2em; color: #7f8c8d; max-width: 700px; margin: 0 auto;">
+    Complete database design and entity relationships for ApraNova LMS
+  </p>
+</div>
 
-Complete database design and entity relationships for ApraNova LMS.
-
----
-
-## 🗄️ Database Overview
-
-- **Database**: PostgreSQL 14
-- **ORM**: Django ORM
-- **Migrations**: Django Migrations
-- **Connection Pooling**: Enabled
-- **Timezone**: UTC
+<div style="background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%); padding: 30px; border-radius: 12px; color: white; margin: 30px 0; box-shadow: 0 8px 25px rgba(22, 160, 133, 0.3);">
+  <h3 style="margin-top: 0; color: white; font-size: 1.6em;">💾 Database Overview</h3>
+  <p style="font-size: 1.1em; line-height: 1.7; margin-bottom: 15px;">
+    ApraNova uses <strong>PostgreSQL 14</strong> with Django ORM for data persistence. The schema supports
+    multi-role authentication, payment tracking, and workspace management.
+  </p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 20px;">
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">🐘</div>
+      <div style="font-weight: 600;">PostgreSQL 14</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Relational database</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">🔄</div>
+      <div style="font-weight: 600;">Django ORM</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Object mapping</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">📦</div>
+      <div style="font-weight: 600;">Migrations</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Version control</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">⚡</div>
+      <div style="font-weight: 600;">Connection Pool</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Performance</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">🌍</div>
+      <div style="font-weight: 600;">UTC Timezone</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Consistent times</div>
+    </div>
+  </div>
+</div>
 
 ---
 
 ## 📊 Entity Relationship Diagram
+
+<div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 20px; border-radius: 10px; margin: 20px 0;">
+  <p style="margin: 0; color: #d35400; font-size: 1.05em;">
+    <strong>📌 Schema:</strong> The database uses foreign keys for relationships, unique constraints for data integrity,
+    and indexes for query performance.
+  </p>
+</div>
 
 ```mermaid
 erDiagram

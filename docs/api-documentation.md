@@ -1,32 +1,53 @@
 ---
 layout: default
-title: API Documentation
+title: API Documentation - ApraNova LMS
 ---
 
-# API Documentation
+<div style="text-align: center; padding: 30px 0 20px 0;">
+  <h1 style="font-size: 3em; margin-bottom: 10px; background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">📡 API Documentation</h1>
+  <p style="font-size: 1.2em; color: #7f8c8d; max-width: 700px; margin: 0 auto;">
+    Complete REST API reference for ApraNova Learning Management System
+  </p>
+</div>
 
-Complete REST API reference for ApraNova Learning Management System.
+<div style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); padding: 30px; border-radius: 12px; color: white; margin: 30px 0; box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);">
+  <h3 style="margin-top: 0; color: white; font-size: 1.6em;">🌐 API Overview</h3>
+  <p style="font-size: 1.1em; line-height: 1.7; margin-bottom: 15px;">
+    ApraNova provides a <strong>RESTful API</strong> built with Django REST Framework. All endpoints return JSON
+    and use JWT tokens for authentication.
+  </p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-weight: 600; margin-bottom: 5px;">Development</div>
+      <div style="font-size: 0.95em; font-family: monospace;">localhost:8000/api</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-weight: 600; margin-bottom: 5px;">Production</div>
+      <div style="font-size: 0.95em; font-family: monospace;">api.apranova.com/api</div>
+    </div>
+  </div>
+</div>
 
----
-
-## 🌐 Base URL
-
-- **Development**: `http://localhost:8000/api`
-- **Production**: `https://api.apranova.com/api`
-
----
-
-## 🔐 Authentication
-
-All authenticated endpoints require a JWT token in the Authorization header:
-
-```
-Authorization: Bearer <access_token>
-```
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; color: white; margin: 30px 0; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);">
+  <h3 style="margin-top: 0; color: white; font-size: 1.4em;">🔐 Authentication</h3>
+  <p style="font-size: 1.05em; line-height: 1.6; margin-bottom: 10px;">
+    All authenticated endpoints require a JWT token in the Authorization header:
+  </p>
+  <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.95em;">
+    Authorization: Bearer &lt;access_token&gt;
+  </div>
+</div>
 
 ---
 
 ## 📚 API Endpoints
+
+<div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 20px; border-radius: 10px; margin: 20px 0;">
+  <p style="margin: 0; color: #d35400; font-size: 1.05em;">
+    <strong>📌 Note:</strong> All endpoints return JSON. Successful responses use 2xx status codes,
+    errors use 4xx (client errors) or 5xx (server errors).
+  </p>
+</div>
 
 ### Authentication Endpoints
 

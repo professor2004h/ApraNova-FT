@@ -1,27 +1,60 @@
 ---
 layout: default
-title: Workspace Provisioning Flow
+title: Workspace Provisioning - ApraNova LMS
 ---
 
-# Workspace Provisioning Flow
+<div style="text-align: center; padding: 30px 0 20px 0;">
+  <h1 style="font-size: 3em; margin-bottom: 10px; background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🐳 Workspace Provisioning</h1>
+  <p style="font-size: 1.2em; color: #7f8c8d; max-width: 700px; margin: 0 auto;">
+    Docker-based workspace provisioning and management in ApraNova LMS
+  </p>
+</div>
 
-Complete documentation for Docker-based workspace provisioning in ApraNova LMS.
-
----
-
-## 🚀 Overview
-
-ApraNova provides isolated, Docker-based VS Code environments (code-server) for each student. Each workspace is a separate container with:
-
-- **VS Code Interface**: Full VS Code in the browser
-- **Pre-installed Tools**: Python, Node.js, Java, C/C++, Git
-- **Persistent Storage**: User files saved in Docker volumes
-- **Isolated Environment**: Each student has their own container
-- **Auto-provisioning**: Created on-demand when student clicks "Launch Workspace"
+<div style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); padding: 30px; border-radius: 12px; color: white; margin: 30px 0; box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);">
+  <h3 style="margin-top: 0; color: white; font-size: 1.6em;">🚀 Workspace Overview</h3>
+  <p style="font-size: 1.1em; line-height: 1.7; margin-bottom: 15px;">
+    ApraNova provides <strong>isolated, Docker-based VS Code environments</strong> (code-server) for each student.
+    Each workspace is a separate container with pre-installed development tools and persistent storage.
+  </p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 20px;">
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">💻</div>
+      <div style="font-weight: 600;">VS Code Browser</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Full IDE experience</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">🛠️</div>
+      <div style="font-weight: 600;">Pre-installed Tools</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Python, Node, Java, Git</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">💾</div>
+      <div style="font-weight: 600;">Persistent Storage</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Docker volumes</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">🔒</div>
+      <div style="font-weight: 600;">Isolated</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Separate containers</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">⚡</div>
+      <div style="font-weight: 600;">Auto-provisioning</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">On-demand creation</div>
+    </div>
+  </div>
+</div>
 
 ---
 
 ## 🏗️ Workspace Architecture
+
+<div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 20px; border-radius: 10px; margin: 20px 0;">
+  <p style="margin: 0; color: #d35400; font-size: 1.05em;">
+    <strong>📌 Architecture:</strong> Uses Docker-in-Docker (DinD) pattern where the Django backend container
+    has access to the Docker socket to create and manage student workspace containers.
+  </p>
+</div>
 
 ```mermaid
 graph TB

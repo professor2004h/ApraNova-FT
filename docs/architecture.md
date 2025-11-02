@@ -1,11 +1,23 @@
 ---
 layout: default
-title: System Architecture
+title: System Architecture - ApraNova LMS
 ---
 
-# System Architecture
+<div style="text-align: center; padding: 30px 0 20px 0;">
+  <h1 style="font-size: 3em; margin-bottom: 10px; background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🏗️ System Architecture</h1>
+  <p style="font-size: 1.2em; color: #7f8c8d; max-width: 700px; margin: 0 auto;">
+    Complete architectural overview of the ApraNova Learning Management System
+  </p>
+</div>
 
-Complete architectural overview of the ApraNova Learning Management System.
+<div style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); padding: 30px; border-radius: 12px; color: white; margin: 30px 0; box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);">
+  <h3 style="margin-top: 0; color: white; font-size: 1.6em;">📋 Architecture Overview</h3>
+  <p style="font-size: 1.1em; line-height: 1.7; margin-bottom: 0;">
+    ApraNova follows a <strong>modern microservices architecture</strong> with clear separation of concerns.
+    The system is built on a <strong>3-tier architecture</strong> (Presentation, Application, Data) with
+    Docker containerization for scalability and isolation.
+  </p>
+</div>
 
 ---
 
@@ -86,7 +98,15 @@ graph TB
 
 ## 📦 Component Architecture
 
-### Frontend Architecture
+<div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); padding: 25px; border-radius: 12px; margin: 25px 0; box-shadow: 0 5px 20px rgba(250, 112, 154, 0.2);">
+  <h3 style="margin-top: 0; color: #2c3e50; font-size: 1.5em;">⚛️ Frontend Architecture</h3>
+  <p style="color: #2c3e50; font-size: 1.05em; line-height: 1.6; margin-bottom: 0;">
+    Built with <strong>Next.js 15.2.4</strong> using the App Router pattern. Features React 19 components,
+    Context API for state management, and Axios for API communication with interceptors for authentication.
+  </p>
+</div>
+
+### Frontend Component Diagram
 
 ```mermaid
 graph LR
@@ -133,7 +153,15 @@ graph LR
     style APIClient fill:#5ed3f3,stroke:#333,stroke-width:2px
 ```
 
-### Backend Architecture
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; margin: 25px 0; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2); color: white;">
+  <h3 style="margin-top: 0; color: white; font-size: 1.5em;">⚙️ Backend Architecture</h3>
+  <p style="font-size: 1.05em; line-height: 1.6; margin-bottom: 0;">
+    Powered by <strong>Django 5.2.7</strong> with Django REST Framework. Implements JWT authentication,
+    Docker-in-Docker workspace provisioning, Stripe payment integration, and PostgreSQL + Redis for data persistence.
+  </p>
+</div>
+
+### Backend Component Diagram
 
 ```mermaid
 graph TB

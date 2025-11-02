@@ -1,27 +1,60 @@
 ---
 layout: default
-title: Payment Processing Flow
+title: Payment Processing - ApraNova LMS
 ---
 
-# Payment Processing Flow
+<div style="text-align: center; padding: 30px 0 20px 0;">
+  <h1 style="font-size: 3em; margin-bottom: 10px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">💳 Payment Processing</h1>
+  <p style="font-size: 1.2em; color: #7f8c8d; max-width: 700px; margin: 0 auto;">
+    Stripe payment integration and processing flows in ApraNova LMS
+  </p>
+</div>
 
-Complete documentation for Stripe payment integration in ApraNova LMS.
-
----
-
-## 💳 Overview
-
-ApraNova uses Stripe for secure payment processing. The integration supports:
-
-- **One-time Payments**: Course enrollment fees
-- **Payment Intents**: Secure payment confirmation
-- **Multiple Currencies**: USD, INR, EUR, etc.
-- **Payment Methods**: Cards, UPI, Wallets
-- **Webhook Support**: Real-time payment status updates
+<div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); padding: 30px; border-radius: 12px; color: white; margin: 30px 0; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3);">
+  <h3 style="margin-top: 0; color: white; font-size: 1.6em;">💰 Payment Overview</h3>
+  <p style="font-size: 1.1em; line-height: 1.7; margin-bottom: 15px;">
+    ApraNova uses <strong>Stripe</strong> for secure payment processing with support for multiple payment methods,
+    currencies, and real-time webhook notifications for payment status updates.
+  </p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 20px;">
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">💵</div>
+      <div style="font-weight: 600;">One-time Payments</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Course enrollment</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">🔒</div>
+      <div style="font-weight: 600;">Payment Intents</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Secure confirmation</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">🌍</div>
+      <div style="font-weight: 600;">Multi-Currency</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">USD, INR, EUR</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">💳</div>
+      <div style="font-weight: 600;">Payment Methods</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Cards, UPI, Wallets</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 1.8em; margin-bottom: 5px;">🔔</div>
+      <div style="font-weight: 600;">Webhooks</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Real-time updates</div>
+    </div>
+  </div>
+</div>
 
 ---
 
 ## 🏗️ Payment Architecture
+
+<div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 20px; border-radius: 10px; margin: 20px 0;">
+  <p style="margin: 0; color: #d35400; font-size: 1.05em;">
+    <strong>📌 Security:</strong> All payment processing is handled by Stripe. Card details never touch our servers.
+    We use Stripe.js for PCI-compliant payment collection.
+  </p>
+</div>
 
 ```mermaid
 graph TB

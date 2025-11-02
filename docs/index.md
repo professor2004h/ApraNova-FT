@@ -1,82 +1,238 @@
 ---
 layout: default
-title: ApraNova - System Documentation
+title: ApraNova LMS - Technical Documentation
 ---
 
-# ApraNova Learning Management System
-## Complete System Documentation
+<div style="text-align: center; padding: 40px 0 20px 0;">
+  <h1 style="font-size: 3.5em; margin-bottom: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🎓 ApraNova LMS</h1>
+  <h2 style="font-size: 1.8em; color: #2c3e50; font-weight: 400; margin-top: 0;">Modern Learning Management System</h2>
+  <p style="font-size: 1.2em; color: #7f8c8d; margin-top: 20px; max-width: 800px; margin-left: auto; margin-right: auto;">
+    Complete technical documentation for a cloud-native LMS with Docker workspaces, JWT authentication, and integrated payments
+  </p>
+</div>
 
-Welcome to the comprehensive documentation for ApraNova LMS - a modern, Docker-based learning management system built with Django REST Framework and Next.js.
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 15px; color: white; margin: 40px 0; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
+  <h3 style="margin-top: 0; color: white; font-size: 1.8em;">🚀 What is ApraNova?</h3>
+  <p style="font-size: 1.15em; line-height: 1.8; margin-bottom: 20px;">
+    ApraNova is a <strong>cloud-native Learning Management System</strong> that provides students with isolated,
+    Docker-based VS Code workspaces, integrated payment processing, and multi-role authentication.
+    Built with Django REST Framework and Next.js for maximum scalability and performance.
+  </p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 25px;">
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 2em; margin-bottom: 5px;">🐳</div>
+      <div style="font-weight: 600;">Docker Workspaces</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Isolated environments</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 2em; margin-bottom: 5px;">🔐</div>
+      <div style="font-weight: 600;">JWT + OAuth</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Secure authentication</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; backdrop-filter: blur(10px);">
+      <div style="font-size: 2em; margin-bottom: 5px;">💳</div>
+      <div style="font-weight: 600;">Stripe Payments</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">Integrated billing</div>
+    </div>
+  </div>
+</div>
 
 ---
 
-## 📚 Documentation Index
+## 📚 Documentation Navigation
 
-### Architecture & Design
-- [System Architecture](./architecture.md) - Complete system overview and component interactions
-- [Database Schema](./database-schema.md) - Database design and relationships
-- [API Documentation](./api-documentation.md) - Complete API reference
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 40px 0;">
 
-### Flow Diagrams
-- [Authentication Flow](./auth-flow.md) - User authentication and authorization
-- [Workspace Provisioning](./workspace-flow.md) - Docker-based workspace creation
-- [Payment Processing](./payment-flow.md) - Stripe payment integration
+<div style="border: 3px solid #3498db; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #f8f9fa 0%, #e8f4f8 100%); transition: transform 0.3s; box-shadow: 0 5px 15px rgba(52, 152, 219, 0.1);">
+  <h3 style="color: #3498db; margin-top: 0; font-size: 1.5em; display: flex; align-items: center; gap: 10px;">
+    <span style="font-size: 1.3em;">🏗️</span> Architecture & Design
+  </h3>
+  <ul style="list-style: none; padding-left: 0;">
+    <li style="margin-bottom: 18px; padding-left: 25px; position: relative;">
+      <span style="position: absolute; left: 0; color: #3498db;">📐</span>
+      <a href="./architecture.html" style="font-weight: 600; font-size: 1.05em; color: #2c3e50; text-decoration: none;">System Architecture</a><br/>
+      <small style="color: #7f8c8d; line-height: 1.6;">Complete system overview with interactive diagrams</small>
+    </li>
+    <li style="margin-bottom: 18px; padding-left: 25px; position: relative;">
+      <span style="position: absolute; left: 0; color: #3498db;">🗄️</span>
+      <a href="./database-schema.html" style="font-weight: 600; font-size: 1.05em; color: #2c3e50; text-decoration: none;">Database Schema</a><br/>
+      <small style="color: #7f8c8d; line-height: 1.6;">ERD diagrams and table relationships</small>
+    </li>
+    <li style="margin-bottom: 0; padding-left: 25px; position: relative;">
+      <span style="position: absolute; left: 0; color: #3498db;">📡</span>
+      <a href="./api-documentation.html" style="font-weight: 600; font-size: 1.05em; color: #2c3e50; text-decoration: none;">API Documentation</a><br/>
+      <small style="color: #7f8c8d; line-height: 1.6;">Complete REST API reference with examples</small>
+    </li>
+  </ul>
+</div>
 
-### Deployment & Operations
-- [Deployment Guide](./deployment.md) - Production deployment instructions
-- [Docker Setup](./docker-setup.md) - Container orchestration details
-- [Monitoring & Logging](./monitoring.md) - System monitoring and debugging
+<div style="border: 3px solid #9b59b6; border-radius: 12px; padding: 25px; background: linear-gradient(135deg, #f8f9fa 0%, #f4e8f8 100%); transition: transform 0.3s; box-shadow: 0 5px 15px rgba(155, 89, 182, 0.1);">
+  <h3 style="color: #9b59b6; margin-top: 0; font-size: 1.5em; display: flex; align-items: center; gap: 10px;">
+    <span style="font-size: 1.3em;">🔄</span> Flow Diagrams
+  </h3>
+  <ul style="list-style: none; padding-left: 0;">
+    <li style="margin-bottom: 18px; padding-left: 25px; position: relative;">
+      <span style="position: absolute; left: 0; color: #9b59b6;">🔐</span>
+      <a href="./auth-flow.html" style="font-weight: 600; font-size: 1.05em; color: #2c3e50; text-decoration: none;">Authentication Flow</a><br/>
+      <small style="color: #7f8c8d; line-height: 1.6;">JWT, OAuth, and social login flows</small>
+    </li>
+    <li style="margin-bottom: 18px; padding-left: 25px; position: relative;">
+      <span style="position: absolute; left: 0; color: #9b59b6;">🐳</span>
+      <a href="./workspace-flow.html" style="font-weight: 600; font-size: 1.05em; color: #2c3e50; text-decoration: none;">Workspace Provisioning</a><br/>
+      <small style="color: #7f8c8d; line-height: 1.6;">Docker-in-Docker workspace creation</small>
+    </li>
+    <li style="margin-bottom: 0; padding-left: 25px; position: relative;">
+      <span style="position: absolute; left: 0; color: #9b59b6;">💳</span>
+      <a href="./payment-flow.html" style="font-weight: 600; font-size: 1.05em; color: #2c3e50; text-decoration: none;">Payment Processing</a><br/>
+      <small style="color: #7f8c8d; line-height: 1.6;">Stripe integration and payment flows</small>
+    </li>
+  </ul>
+</div>
 
-### Development
-- [Getting Started](./getting-started.md) - Quick start guide for developers
-- [Contributing](./contributing.md) - Contribution guidelines
-- [Testing Guide](./testing.md) - Testing strategies and examples
+</div>
 
 ---
 
-## 🚀 Quick Links
+## 🚀 Quick Start
 
-- **GitHub Repository**: [ApraNova](https://github.com/your-org/apranova)
-- **Live Demo**: [demo.apranova.com](https://demo.apranova.com)
-- **API Swagger**: [api.apranova.com/swagger](https://api.apranova.com/swagger)
+<div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 30px; border-radius: 12px; color: white; margin: 30px 0; box-shadow: 0 8px 25px rgba(245, 87, 108, 0.3);">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+    <div>
+      <div style="font-size: 1.1em; font-weight: 600; margin-bottom: 8px;">📦 GitHub Repository</div>
+      <a href="https://github.com/prempp/ApraNova" target="_blank" style="color: white; text-decoration: underline;">github.com/prempp/ApraNova</a>
+    </div>
+    <div>
+      <div style="font-size: 1.1em; font-weight: 600; margin-bottom: 8px;">🔧 Tech Stack</div>
+      <div style="font-size: 0.95em;">Django 5.2.7 • Next.js 15.2.4 • PostgreSQL 14 • Redis 7</div>
+    </div>
+  </div>
+</div>
 
 ---
 
 ## 🏗️ System Overview
 
-ApraNova is a comprehensive Learning Management System featuring:
-
-- **Multi-Role Authentication**: Student, Trainer, Admin, SuperAdmin
-- **Docker-Based Workspaces**: Isolated VS Code environments for each student
-- **Payment Integration**: Stripe payment processing
-- **OAuth Support**: Google and GitHub authentication
-- **Real-time Updates**: WebSocket support for live notifications
-- **Scalable Architecture**: Microservices-ready design
+<div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 35px; border-radius: 12px; margin: 30px 0;">
+  <h3 style="margin-top: 0; color: #d35400; font-size: 1.6em;">💡 Key Features</h3>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px;">
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+      <div style="font-size: 2em; margin-bottom: 10px;">👥</div>
+      <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">Multi-Role Authentication</div>
+      <div style="color: #7f8c8d; font-size: 0.95em;">Student, Trainer, Admin, SuperAdmin</div>
+    </div>
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+      <div style="font-size: 2em; margin-bottom: 10px;">🐳</div>
+      <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">Docker-Based Workspaces</div>
+      <div style="color: #7f8c8d; font-size: 0.95em;">Isolated VS Code environments</div>
+    </div>
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+      <div style="font-size: 2em; margin-bottom: 10px;">💳</div>
+      <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">Payment Integration</div>
+      <div style="color: #7f8c8d; font-size: 0.95em;">Stripe payment processing</div>
+    </div>
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+      <div style="font-size: 2em; margin-bottom: 10px;">🔐</div>
+      <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">OAuth Support</div>
+      <div style="color: #7f8c8d; font-size: 0.95em;">Google and GitHub authentication</div>
+    </div>
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+      <div style="font-size: 2em; margin-bottom: 10px;">⚡</div>
+      <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">Real-time Updates</div>
+      <div style="color: #7f8c8d; font-size: 0.95em;">WebSocket support for notifications</div>
+    </div>
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+      <div style="font-size: 2em; margin-bottom: 10px;">📈</div>
+      <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">Scalable Architecture</div>
+      <div style="color: #7f8c8d; font-size: 0.95em;">Microservices-ready design</div>
+    </div>
+  </div>
+</div>
 
 ---
 
 ## 🛠️ Technology Stack
 
-### Backend
-- **Framework**: Django 5.2.7 + Django REST Framework
-- **Database**: PostgreSQL 14
-- **Cache**: Redis 7
-- **Authentication**: JWT + OAuth 2.0
-- **Payment**: Stripe API
-- **Containerization**: Docker + Docker-in-Docker
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin: 30px 0;">
 
-### Frontend
-- **Framework**: Next.js 15.2.4 (App Router)
-- **UI Library**: React 19 + Tailwind CSS
-- **State Management**: React Context API
-- **HTTP Client**: Axios with interceptors
-- **Authentication**: JWT tokens in localStorage
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; color: white; box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);">
+  <h3 style="margin-top: 0; color: white; font-size: 1.4em; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">⚙️ Backend</h3>
+  <ul style="list-style: none; padding-left: 0; margin-top: 15px;">
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Framework:</strong> Django 5.2.7 + DRF
+    </li>
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Database:</strong> PostgreSQL 14
+    </li>
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Cache:</strong> Redis 7
+    </li>
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Authentication:</strong> JWT + OAuth 2.0
+    </li>
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Payment:</strong> Stripe API
+    </li>
+    <li style="margin-bottom: 0; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Containers:</strong> Docker + DinD
+    </li>
+  </ul>
+</div>
 
-### Infrastructure
-- **Orchestration**: Docker Compose
-- **Web Server**: Gunicorn (Backend), Node.js (Frontend)
-- **Reverse Proxy**: Nginx (Production)
-- **Code Server**: VS Code in browser for workspaces
+<div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); padding: 25px; border-radius: 12px; color: #2c3e50; box-shadow: 0 5px 20px rgba(250, 112, 154, 0.3);">
+  <h3 style="margin-top: 0; font-size: 1.4em; border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom: 10px;">⚛️ Frontend</h3>
+  <ul style="list-style: none; padding-left: 0; margin-top: 15px;">
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Framework:</strong> Next.js 15.2.4
+    </li>
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>UI Library:</strong> React 19 + Tailwind
+    </li>
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>State:</strong> React Context API
+    </li>
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>HTTP Client:</strong> Axios
+    </li>
+    <li style="margin-bottom: 0; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Auth Storage:</strong> localStorage
+    </li>
+  </ul>
+</div>
+
+<div style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); padding: 25px; border-radius: 12px; color: white; box-shadow: 0 5px 20px rgba(48, 207, 208, 0.3);">
+  <h3 style="margin-top: 0; color: white; font-size: 1.4em; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">🏗️ Infrastructure</h3>
+  <ul style="list-style: none; padding-left: 0; margin-top: 15px;">
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Orchestration:</strong> Docker Compose
+    </li>
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Web Server:</strong> Gunicorn + Node.js
+    </li>
+    <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Reverse Proxy:</strong> Nginx
+    </li>
+    <li style="margin-bottom: 0; padding-left: 20px; position: relative;">
+      <span style="position: absolute; left: 0;">•</span>
+      <strong>Code Server:</strong> VS Code in browser
+    </li>
+  </ul>
+</div>
+
+</div>
 
 ---
 

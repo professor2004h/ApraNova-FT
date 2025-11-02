@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} - {{ site.title }}</title>
+    <meta name="description" content="{{ page.description | default: site.description }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ '/assets/images/favicon.png' | relative_url }}">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
+    
+    <!-- Mermaid for diagrams -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#61dafb',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#333',
+                lineColor: '#333',
+                secondaryColor: '#092e20',
+                tertiaryColor: '#336791'
+            }
+        });
+    </script>
+    
+    <!-- Syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="page-header">
+        <div class="header-content">
+            <h1 class="project-name">
+                <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+            </h1>
+            <h2 class="project-tagline">{{ site.description }}</h2>
+            
+            <!-- Navigation -->
+            <nav class="main-nav">
+                <a href="{{ '/index.html' | relative_url }}" class="btn">Home</a>
+                <a href="{{ '/architecture.html' | relative_url }}" class="btn">Architecture</a>
+                <a href="{{ '/auth-flow.html' | relative_url }}" class="btn">Auth Flow</a>
+                <a href="{{ '/workspace-flow.html' | relative_url }}" class="btn">Workspace</a>
+                <a href="{{ '/api-documentation.html' | relative_url }}" class="btn">API Docs</a>
+                <a href="{{ '/database-schema.html' | relative_url }}" class="btn">Database</a>
+            </nav>
+            
+            <!-- GitHub Link -->
+            {% if site.github.repository_url %}
+            <a href="{{ site.github.repository_url }}" class="btn btn-github">
+                <i class="fab fa-github"></i> View on GitHub
+            </a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            {{ content }}
+        </div>
+        
+        <!-- Table of Contents (if page has headings) -->
+        <aside class="toc-sidebar">
+            <div class="toc-container">
+                <h3>On This Page</h3>
+                <div id="toc"></div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>
+                <strong>{{ site.title }}</strong> - 
+                Built with <i class="fas fa-heart" style="color: #e74c3c;"></i> using Django, Next.js, and Docker
+            </p>
+            <p>
+                <a href="{{ site.github.repository_url }}">
+                    <i class="fab fa-github"></i> GitHub
+                </a> | 
+                <a href="mailto:support@apranova.com">
+                    <i class="fas fa-envelope"></i> Contact
+                </a> | 
+                <a href="{{ '/index.html' | relative_url }}">
+                    <i class="fas fa-book"></i> Documentation
+                </a>
+            </p>
+            <p class="copyright">
+                &copy; {{ 'now' | date: "%Y" }} ApraNova. Licensed under MIT License.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Table of Contents Generator -->
+    <script>
+        // Generate table of contents from headings
+        document.addEventListener('DOMContentLoaded', function() {
+            const content = document.querySelector('.content-wrapper');
+            const toc = document.getElementById('toc');
+            
+            if (!content || !toc) return;
+            
+            const headings = content.querySelectorAll('h2, h3');
+            if (headings.length === 0) {
+                document.querySelector('.toc-sidebar').style.display = 'none';
+                return;
+            }
+            
+            const tocList = document.createElement('ul');
+            tocList.className = 'toc-list';
+            
+            headings.forEach((heading, index) => {
+                // Add ID to heading if it doesn't have one
+                if (!heading.id) {
+                    heading.id = 'heading-' + index;
+                }
+                
+                const li = document.createElement('li');
+                li.className = heading.tagName.toLowerCase();
+                
+                const a = document.createElement('a');
+                a.href = '#' + heading.id;
+                a.textContent = heading.textContent.replace(/^[#\s]+/, '');
+                
+                li.appendChild(a);
+                tocList.appendChild(li);
+            });
+            
+            toc.appendChild(tocList);
+            
+            // Smooth scroll
+            document.querySelectorAll('.toc-list a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Back to top button -->
+    <button id="back-to-top" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Back to top button
+        const backToTop = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+        
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
+

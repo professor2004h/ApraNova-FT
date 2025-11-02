@@ -1,0 +1,93 @@
+# GitHub Pages Configuration for ApraNova Documentation
+
+# Site settings
+title: ApraNova Documentation
+description: Complete system documentation for ApraNova Learning Management System
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site
+
+# Theme
+theme: jekyll-theme-cayman
+# Alternative themes:
+# - jekyll-theme-minimal
+# - jekyll-theme-architect
+# - jekyll-theme-slate
+# - jekyll-theme-modernist
+
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: 'highlight'
+
+# Plugins
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .sass-cache
+  - .jekyll-cache
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "default"
+
+# Navigation
+navigation:
+  - title: Home
+    url: /
+  - title: Architecture
+    url: /architecture
+  - title: Authentication
+    url: /auth-flow
+  - title: Workspace
+    url: /workspace-flow
+  - title: API Docs
+    url: /api-documentation
+  - title: Database
+    url: /database-schema
+
+# Social links
+github_username: your-org
+repository: your-org/apranova
+
+# Google Analytics (optional)
+# google_analytics: UA-XXXXXXXXX-X
+
+# SEO
+author: ApraNova Team
+twitter:
+  username: apranova
+  card: summary
+
+# Logo
+logo: /assets/images/logo.png
+
+# Mermaid support
+mermaid:
+  enabled: true
+

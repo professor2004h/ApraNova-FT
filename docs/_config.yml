@@ -3,8 +3,8 @@
 # Site settings
 title: ApraNova Documentation
 description: Complete system documentation for ApraNova Learning Management System
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site
+baseurl: "/ApraNova" # the subpath of your site, e.g. /blog
+url: "https://prempp.github.io" # the base hostname & protocol for your site
 
 # Theme
 theme: jekyll-theme-cayman

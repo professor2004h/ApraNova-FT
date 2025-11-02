@@ -1,8 +1,8 @@
 # GitHub Pages Configuration for ApraNova Documentation
 
 # Site settings
-title: ApraNova Documentation
-description: Complete system documentation for ApraNova Learning Management System
+title: ApraNova LMS - Technical Documentation
+description: Modern Learning Management System with Docker-based workspaces, JWT authentication, and Stripe payments. Built with Django REST Framework and Next.js.
 baseurl: "/ApraNova"
 url: "https://prempp.github.io"
 

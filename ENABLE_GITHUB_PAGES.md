@@ -29,24 +29,23 @@ Your code is on GitHub, but GitHub Pages needs to be manually enabled. Follow th
 
 You'll see a section called **"Build and deployment"**
 
-1. **Source**: 
-   - Click the dropdown that says "None" or "Deploy from a branch"
-   - Select: **"Deploy from a branch"**
+1. **Source**:
+   - Click the dropdown that says "None"
+   - Select: **"GitHub Actions"** (NOT "Deploy from a branch")
 
-2. **Branch**:
-   - First dropdown: Select **"main"**
-   - Second dropdown: Select **"/docs"**
-   - Click **"Save"** button
+2. That's it! No need to select branch or folder
 
 ---
 
 ### **Step 5: Wait for Deployment**
 
-After clicking Save:
-1. GitHub will show a message: "GitHub Pages source saved"
-2. A blue box will appear at the top saying: "Your site is ready to be published at https://prempp.github.io/ApraNova/"
-3. Wait **2-5 minutes** for the first build
-4. Refresh the page - the box will turn **green** when ready
+After selecting "GitHub Actions":
+1. GitHub will automatically start building your site
+2. Go to the **"Actions"** tab at the top of your repository
+3. You'll see a workflow running: "Deploy Jekyll site to Pages"
+4. Wait **2-5 minutes** for it to complete (green checkmark)
+5. Go back to Settings → Pages
+6. You'll see: "Your site is live at https://prempp.github.io/ApraNova/"
 
 ---
 
@@ -62,9 +61,10 @@ After clicking Save:
 
 When GitHub Pages is enabled correctly, you'll see:
 
-- ✅ Green box saying: "Your site is published at https://prempp.github.io/ApraNova/"
-- ✅ A link to visit your site
-- ✅ Build status showing "Active"
+- ✅ In Settings → Pages: Source shows "GitHub Actions"
+- ✅ In Actions tab: Green checkmark on "Deploy Jekyll site to Pages"
+- ✅ In Settings → Pages: "Your site is live at https://prempp.github.io/ApraNova/"
+- ✅ A "Visit site" button
 
 ---
 
@@ -73,16 +73,18 @@ When GitHub Pages is enabled correctly, you'll see:
 ### **If you see "404 - Site not found"**
 - Wait 2-5 more minutes (first build takes time)
 - Refresh the page
-- Check that you selected **/docs** folder (not root)
+- Check Actions tab to see if build completed
 
-### **If Settings → Pages shows an error**
+### **If you don't see "GitHub Actions" option**
 - Make sure the repository is **Public** (not Private)
+- Go to Settings → General → Danger Zone → Change visibility → Public
 - Free GitHub accounts can only use Pages with public repos
 
 ### **If the build fails**
 - Go to the **"Actions"** tab in your repository
-- Check if there are any failed builds
-- The error message will tell you what's wrong
+- Click on the failed workflow
+- Check the error logs
+- The workflow should build automatically after you select "GitHub Actions"
 
 ---
 
@@ -105,11 +107,11 @@ Once enabled, these pages will be available:
 - [ ] Go to https://github.com/prempp/ApraNova
 - [ ] Click "Settings" tab
 - [ ] Click "Pages" in left sidebar
-- [ ] Source: "Deploy from a branch"
-- [ ] Branch: "main" + "/docs"
-- [ ] Click "Save"
-- [ ] Wait 2-5 minutes
-- [ ] Visit https://prempp.github.io/ApraNova/
+- [ ] Source: Select "GitHub Actions"
+- [ ] Go to "Actions" tab
+- [ ] Wait for "Deploy Jekyll site to Pages" to complete (green checkmark)
+- [ ] Go back to Settings → Pages
+- [ ] Click "Visit site" or go to https://prempp.github.io/ApraNova/
 
 ---
 
@@ -119,9 +121,13 @@ Once enabled, these pages will be available:
 
 ```
 Build and deployment
-├── Source: Deploy from a branch
-├── Branch: main    /docs    [Save]
+├── Source: GitHub Actions
 └── Custom domain: (leave empty)
+```
+
+After the workflow runs, you'll see:
+```
+✅ Your site is live at https://prempp.github.io/ApraNova/
 ```
 
 ---

@@ -31,6 +31,8 @@ A comprehensive Learning Management System (LMS) built with Django REST Framewor
 
 ## 🛠️ Quick Start
 
+> **💡 Alternative:** Want to deploy without Git? See [Docker Distribution Package](#-docker-distribution-package) for a portable, one-command installation!
+
 ### 1. Clone the Repository
 
 ```bash
@@ -426,6 +428,122 @@ lsof -i :8000
 
 # Kill the process or change ports in docker-compose.complete.yml
 ```
+
+## 📦 Docker Distribution Package
+
+### Create a Portable Distribution Package
+
+You can create a complete, portable Docker package to deploy ApraNova on **any other machine** without needing Git or building images!
+
+#### What is the Distribution Package?
+
+A self-contained package (~1.3 GB) that includes:
+- ✅ All Docker images (frontend, backend, code-server, database, cache)
+- ✅ Configuration files
+- ✅ One-command installer scripts for Windows/Linux/Mac
+- ✅ Complete documentation
+
+#### Creating the Distribution Package
+
+**Windows:**
+```powershell
+powershell -ExecutionPolicy Bypass -File .\export-docker-images.ps1
+```
+
+**Linux/Mac:**
+```bash
+chmod +x export-docker-images.sh
+./export-docker-images.sh
+```
+
+This will create a folder `apranova-docker-export/` containing:
+- `code-server.tar` (968 MB) - VS Code in browser
+- `backend.tar` (125 MB) - Django backend
+- `frontend.tar` (88 MB) - Next.js frontend
+- `postgres.tar` (104 MB) - PostgreSQL database
+- `redis.tar` (16 MB) - Redis cache
+- `docker-compose.yml` - Service configuration
+- `.env.example` - Environment template
+- `import-and-run.ps1` - Windows installer
+- `import-and-run.sh` - Linux/Mac installer
+- `README.md` - User guide
+
+**Total Size:** ~1.27 GB
+
+#### Using the Distribution Package on Another Machine
+
+1. **Transfer the Package**
+   - Copy the entire `apranova-docker-export/` folder to the target machine
+   - Use USB drive, network share, or cloud storage
+
+2. **Install on Target Machine**
+
+   **Windows:**
+   ```powershell
+   cd apranova-docker-export
+   powershell -ExecutionPolicy Bypass -File .\import-and-run.ps1
+   ```
+
+   **Linux/Mac:**
+   ```bash
+   cd apranova-docker-export
+   chmod +x import-and-run.sh
+   ./import-and-run.sh
+   ```
+
+3. **Access the Platform**
+   - Frontend: http://localhost:3000
+   - Backend: http://localhost:8000
+   - Admin: http://localhost:8000/admin
+
+#### What the Import Script Does
+
+The import script automatically:
+1. ✅ Checks if Docker is running
+2. ✅ Imports all Docker images from .tar files
+3. ✅ Creates .env configuration
+4. ✅ Starts all services with docker-compose
+5. ✅ Verifies services are healthy
+6. ✅ Shows access URLs
+
+**No manual configuration needed!**
+
+#### Benefits
+
+**For Deployment:**
+- ✅ No Git repository needed
+- ✅ No image building required (pre-built)
+- ✅ Offline installation (no internet after transfer)
+- ✅ Consistent deployment across machines
+- ✅ One-command installation
+
+**For Users:**
+- ✅ Simple installation process
+- ✅ No technical knowledge required
+- ✅ Works on Windows, Linux, and Mac
+- ✅ Complete platform in one package
+
+#### System Requirements for Target Machine
+
+**Minimum:**
+- Docker Desktop (Windows/Mac) or Docker Engine (Linux)
+- 8 GB RAM
+- 20 GB free disk space
+- Ports available: 3000, 8000, 5433, 6380
+
+**Recommended:**
+- 16 GB RAM
+- 50 GB SSD
+- 4+ CPU cores
+
+#### Use Cases
+
+1. **Classroom Deployment** - Install on all classroom computers from USB
+2. **Demo/Presentation** - Run on laptop without internet
+3. **Development Team** - Share identical environment with team
+4. **Production Deployment** - Deploy to servers without build process
+
+For complete documentation, see `DISTRIBUTION_GUIDE.md`.
 
 ## 🧹 Cleanup
 

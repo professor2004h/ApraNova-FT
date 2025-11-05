@@ -89,9 +89,9 @@ def create_workspace(request):
                 detach=True,
                 ports={"8080/tcp": port},
                 environment={
-                    "PASSWORD": "",  # Clear the password
+                    "PASSWORD": "",  # Clear the password - this disables password authentication
                 },
-                command=["--auth", "none", "--bind-addr", "0.0.0.0:8080", "."],  # Disable password authentication
+                entrypoint=["/usr/bin/entrypoint.sh", "--auth", "none", "--bind-addr", "0.0.0.0:8080", "."],  # Override entrypoint with --auth none
                 volumes={user_volume: {"bind": "/home/coder/project", "mode": "rw"}},
                 network="apranova_network",  # Use the same network as other containers
                 restart_policy={"Name": "unless-stopped"},

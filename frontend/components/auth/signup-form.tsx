@@ -159,9 +159,14 @@ export default function SignupForm() {
 
   async function checkEmailAvailableAPI(email: string): Promise<boolean> {
     try{
+      if (!apiClient || !apiClient.post) {
+        console.error('API Client not initialized properly');
+        return true; // fallback to allow submission
+      }
       const res = await apiClient.post("/users/check-email/", {email})
       return !res.data.exists;
-    }catch{
+    }catch(error){
+      console.error('Email check error:', error);
       return true // fallback to allow submission, or handle error accordingly here
     }
 }
@@ -177,6 +182,10 @@ export default function SignupForm() {
     role: string
   }) {
     try {
+      if (!apiClient || !apiClient.post) {
+        throw new Error('API Client not initialized. Please refresh the page and try again.');
+      }
+
       const res = await apiClient.post("/auth/registration/", payload, { withCredentials: true })
 
       // Save tokens to localStorage if they exist in the response
@@ -189,12 +198,13 @@ export default function SignupForm() {
       return res.data
     } catch (error: any) {
       const data = error.response?.data || {}
-      console.error("Signup error response:", data)
+      console.error("Signup error response:", error)
       const message =
         data?.email?.[0] ||
         data?.non_field_errors?.[0] ||
         data?.password1?.[0] ||
         data?.password2?.[0] ||
+        error.message ||
         "Signup failed"
       throw new Error(message)
     }

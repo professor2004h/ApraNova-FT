@@ -271,6 +271,36 @@ docker exec apranova_backend docker ps
 docker ps --filter "name=workspace_"
 ```
 
+### Workspace Access
+
+#### Code-Server - No Password Required! 🎉
+
+Students can now launch their workspace **without any password**!
+
+**How it works:**
+1. Student logs in to ApraNova
+2. Navigates to Workspace section
+3. Clicks "Launch Workspace" button
+4. VS Code opens directly in the browser - no password prompt!
+
+**Benefits:**
+- ✅ Faster access - no password to remember
+- ✅ Better user experience - instant coding
+- ✅ Still secure - authentication through ApraNova login
+- ✅ Isolated workspaces - each student has their own environment
+
+**For Administrators:**
+```bash
+# Check workspace status
+docker ps --filter "name=workspace_"
+
+# View workspace logs
+docker logs workspace_<user_id>
+
+# Access Django shell to check user info
+docker exec -it apranova_backend python manage.py shell
+```
+
 ### Workspace Management
 
 #### List All Workspaces
@@ -291,6 +321,16 @@ docker rm -f workspace_<user_id>
 #### View Workspace Logs
 ```bash
 docker logs workspace_<user_id>
+```
+
+#### Access a Specific Workspace
+```bash
+# Get workspace URL (no password needed!)
+# User ID: 1
+# URL: http://localhost:<dynamic_port>
+
+# Find the port for a specific workspace
+docker port workspace_1 8080
 ```
 
 ## 🧪 Testing

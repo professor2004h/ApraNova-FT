@@ -88,7 +88,10 @@ def create_workspace(request):
                 name=container_name,
                 detach=True,
                 ports={"8080/tcp": port},
-                command=["--auth", "none"],  # Disable password authentication
+                environment={
+                    "PASSWORD": "",  # Clear the password
+                },
+                command=["--auth", "none", "--bind-addr", "0.0.0.0:8080", "."],  # Disable password authentication
                 volumes={user_volume: {"bind": "/home/coder/project", "mode": "rw"}},
                 network="apranova_network",  # Use the same network as other containers
                 restart_policy={"Name": "unless-stopped"},

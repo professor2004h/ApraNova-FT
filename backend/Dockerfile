@@ -65,6 +65,10 @@ COPY --chown=django:django . .
 RUN mkdir -p /app/staticfiles /app/media /app/APROVOVA /app/workspaces && \
     chown -R django:django /app
 
+# Copy and set permissions for entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Collect static files (as root before switching user)
 RUN python manage.py collectstatic --noinput || true
 
@@ -78,6 +82,9 @@ EXPOSE 8000
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8000/health', timeout=5)" || exit 1
+
+# Set entrypoint
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 # Run gunicorn for production
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--threads", "2", "--timeout", "60", "--access-logfile", "-", "--error-logfile", "-", "core.wsgi:application"]

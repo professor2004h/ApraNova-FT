@@ -58,10 +58,21 @@ Write-Host ""
 # Step 4: Build Frontend
 # ============================================
 Write-Host "[4/6] Building Frontend..." -ForegroundColor Yellow
+Write-Host "Using docker build directly to avoid cache issues..." -ForegroundColor Gray
 
-docker-compose -f docker-compose.complete.yml build frontend
+# Remove old frontend image to force fresh build
+Write-Host "Removing old frontend image (if exists)..." -ForegroundColor Gray
+docker rmi apranova-frontend:latest -f 2>$null
 
-if ($LASTEXITCODE -ne 0) {
+# Build using docker build directly (not docker-compose build)
+# This avoids persistent cache issues with docker-compose
+Write-Host "Building frontend image..." -ForegroundColor Gray
+Push-Location frontend
+docker build --pull -t apranova-frontend:latest .
+$buildResult = $LASTEXITCODE
+Pop-Location
+
+if ($buildResult -ne 0) {
     Write-Host "❌ Failed to build frontend!" -ForegroundColor Red
     exit 1
 }
@@ -85,9 +96,36 @@ Write-Host "✅ All services started!" -ForegroundColor Green
 Write-Host ""
 
 # ============================================
-# Step 6: Wait for services to be healthy
+# Step 6: Run Database Migrations
 # ============================================
-Write-Host "[6/6] Waiting for services to be healthy..." -ForegroundColor Yellow
+Write-Host "[6/8] Running database migrations..." -ForegroundColor Yellow
+
+docker exec apranova_backend python manage.py migrate --noinput
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "⚠️  Migration failed, but continuing..." -ForegroundColor Yellow
+}
+
+Write-Host "✅ Migrations completed!" -ForegroundColor Green
+Write-Host ""
+
+# ============================================
+# Step 7: Create Demo Users
+# ============================================
+Write-Host "[7/8] Creating demo users..." -ForegroundColor Yellow
+
+docker exec apranova_backend python manage.py create_demo_users
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "⚠️  Demo user creation failed, but continuing..." -ForegroundColor Yellow
+}
+
+Write-Host ""
+
+# ============================================
+# Step 8: Wait for services to be healthy
+# ============================================
+Write-Host "[8/8] Waiting for services to be healthy..." -ForegroundColor Yellow
 Write-Host "This may take 30-60 seconds..." -ForegroundColor Gray
 
 Start-Sleep -Seconds 10
@@ -129,19 +167,46 @@ docker-compose -f docker-compose.complete.yml ps
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "  Access URLs" -ForegroundColor Cyan
+Write-Host "  🌐 Access URLs" -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "  Frontend:  http://localhost:3000" -ForegroundColor Green
 Write-Host "  Backend:   http://localhost:8000" -ForegroundColor Green
 Write-Host "  API Docs:  http://localhost:8000/swagger/" -ForegroundColor Green
+Write-Host "  Admin:     http://localhost:8000/admin" -ForegroundColor Green
 Write-Host "  Database:  localhost:5433" -ForegroundColor Green
 Write-Host "  Redis:     localhost:6380" -ForegroundColor Green
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
-Write-Host "✅ ApraNova is ready!" -ForegroundColor Green
+Write-Host "============================================" -ForegroundColor Yellow
+Write-Host "  👤 Demo User Credentials" -ForegroundColor Yellow
+Write-Host "============================================" -ForegroundColor Yellow
+Write-Host "  Admin:    admin@apranova.com / Admin@123" -ForegroundColor White
+Write-Host "  Student:  student@apranova.com / Student@123" -ForegroundColor White
+Write-Host "  Teacher:  teacher@apranova.com / Teacher@123" -ForegroundColor White
+Write-Host "============================================" -ForegroundColor Yellow
+Write-Host ""
+
+Write-Host "============================================" -ForegroundColor Magenta
+Write-Host "  💻 Code-Server Workspace Access" -ForegroundColor Magenta
+Write-Host "============================================" -ForegroundColor Magenta
+Write-Host "  Students can launch their workspace from" -ForegroundColor White
+Write-Host "  the dashboard without any password!" -ForegroundColor Green
+Write-Host ""
+Write-Host "  💡 Tip: Click 'Launch Workspace' button" -ForegroundColor Gray
+Write-Host "          to access VS Code in the browser" -ForegroundColor Gray
+Write-Host "============================================" -ForegroundColor Magenta
+Write-Host ""
+
+Write-Host "ApraNova is ready!" -ForegroundColor Green
+Write-Host ""
+Write-Host "Quick Start:" -ForegroundColor Cyan
+Write-Host "  1. Open http://localhost:3000" -ForegroundColor Gray
+Write-Host "  2. Login with student@apranova.com / Student@123" -ForegroundColor Gray
+Write-Host "  3. Go to Workspace and click Launch Workspace" -ForegroundColor Gray
+Write-Host "  4. VS Code will open directly - no password needed!" -ForegroundColor Gray
 Write-Host ""
 Write-Host "To view logs: docker-compose -f docker-compose.complete.yml logs -f" -ForegroundColor Gray
-Write-Host "To stop:      docker-compose -f docker-compose.complete.yml down" -ForegroundColor Gray
+Write-Host "To stop: docker-compose -f docker-compose.complete.yml down" -ForegroundColor Gray
 Write-Host ""
 

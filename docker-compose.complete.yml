@@ -9,12 +9,11 @@
 # - Code-Server (for student workspaces)
 # ============================================
 
-version: '3.8'
-
 services:
   # ============================================
   # Backend - Django REST API with Docker-in-Docker
   # ============================================
+  
   backend:
     build:
       context: ./backend
@@ -59,12 +58,17 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - NEXT_PUBLIC_APP_NAME=ApraNova
+        - NEXT_PUBLIC_APP_URL=http://localhost:3000
     container_name: apranova_frontend
     restart: unless-stopped
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_APP_NAME=ApraNova
       - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
       - BACKEND_URL=http://backend:8000
     depends_on:
       - backend

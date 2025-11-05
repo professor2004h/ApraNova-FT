@@ -8,13 +8,16 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
+# Enable corepack and install pnpm globally
+RUN corepack enable && corepack install -g pnpm@latest
+
 # Copy package files
 COPY package.json package-lock.json* pnpm-lock.yaml* ./
 
 # Install dependencies based on the preferred package manager
 RUN \
   if [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && pnpm install --frozen-lockfile; \
+    pnpm install --frozen-lockfile; \
   elif [ -f package-lock.json ]; then \
     npm ci; \
   else \
@@ -28,20 +31,31 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Enable corepack and install pnpm globally
+RUN corepack enable && corepack install -g pnpm@latest
+
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy all source files
 COPY . .
 
+# Accept build arguments for Next.js public environment variables
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_APP_NAME
+ARG NEXT_PUBLIC_APP_URL
+
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME}
+ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
 
 # Build the application
 RUN \
   if [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && pnpm run build; \
+    pnpm run build; \
   else \
     npm run build; \
   fi

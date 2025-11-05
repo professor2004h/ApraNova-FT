@@ -14,9 +14,43 @@ $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $scriptPath
 
 # ============================================
+# Step 0: Complete Cleanup (No Cache Issues!)
+# ============================================
+Write-Host "[0/9] Performing complete cleanup..." -ForegroundColor Yellow
+Write-Host "This ensures no cache issues on rebuild!" -ForegroundColor Gray
+Write-Host ""
+
+# Stop all containers
+Write-Host "  → Stopping all ApraNova containers..." -ForegroundColor Gray
+docker-compose -f docker-compose.complete.yml down 2>$null
+
+# Remove all workspace containers
+Write-Host "  → Removing all workspace containers..." -ForegroundColor Gray
+docker ps -a --filter "name=workspace_" --format "{{.Names}}" | ForEach-Object {
+    docker rm -f $_ 2>$null
+}
+
+# Remove all ApraNova images
+Write-Host "  → Removing all ApraNova images..." -ForegroundColor Gray
+docker rmi apranova-frontend:latest -f 2>$null
+docker rmi apranova-backend:latest -f 2>$null
+docker rmi apra-nova-code-server:latest -f 2>$null
+
+# Prune build cache
+Write-Host "  → Pruning Docker build cache..." -ForegroundColor Gray
+docker builder prune -f 2>$null
+
+# Prune dangling images
+Write-Host "  → Pruning dangling images..." -ForegroundColor Gray
+docker image prune -f 2>$null
+
+Write-Host "✅ Cleanup completed!" -ForegroundColor Green
+Write-Host ""
+
+# ============================================
 # Step 1: Build Code-Server Image
 # ============================================
-Write-Host "[1/6] Building Code-Server Image..." -ForegroundColor Yellow
+Write-Host "[1/9] Building Code-Server Image..." -ForegroundColor Yellow
 Write-Host "This may take 5-10 minutes on first run..." -ForegroundColor Gray
 
 docker build -t apra-nova-code-server:latest ./backend/apra-nova-code-server
@@ -30,23 +64,17 @@ Write-Host "✅ Code-Server image built successfully!" -ForegroundColor Green
 Write-Host ""
 
 # ============================================
-# Step 2: Stop any existing containers
+# Step 2: Build Backend with Docker CLI
 # ============================================
-Write-Host "[2/6] Stopping existing containers..." -ForegroundColor Yellow
+Write-Host "[2/9] Building Backend with Docker-in-Docker support..." -ForegroundColor Yellow
+Write-Host "Building with --no-cache to ensure fresh build..." -ForegroundColor Gray
 
-docker-compose -f docker-compose.complete.yml down
+Push-Location backend
+docker build --no-cache --pull -t apranova-backend:latest .
+$buildResult = $LASTEXITCODE
+Pop-Location
 
-Write-Host "✅ Existing containers stopped!" -ForegroundColor Green
-Write-Host ""
-
-# ============================================
-# Step 3: Build Backend with Docker CLI
-# ============================================
-Write-Host "[3/6] Building Backend with Docker-in-Docker support..." -ForegroundColor Yellow
-
-docker-compose -f docker-compose.complete.yml build backend
-
-if ($LASTEXITCODE -ne 0) {
+if ($buildResult -ne 0) {
     Write-Host "❌ Failed to build backend!" -ForegroundColor Red
     exit 1
 }
@@ -55,20 +83,13 @@ Write-Host "✅ Backend built successfully!" -ForegroundColor Green
 Write-Host ""
 
 # ============================================
-# Step 4: Build Frontend
+# Step 3: Build Frontend
 # ============================================
-Write-Host "[4/6] Building Frontend..." -ForegroundColor Yellow
-Write-Host "Using docker build directly to avoid cache issues..." -ForegroundColor Gray
+Write-Host "[3/9] Building Frontend..." -ForegroundColor Yellow
+Write-Host "Building with --no-cache to ensure fresh build..." -ForegroundColor Gray
 
-# Remove old frontend image to force fresh build
-Write-Host "Removing old frontend image (if exists)..." -ForegroundColor Gray
-docker rmi apranova-frontend:latest -f 2>$null
-
-# Build using docker build directly (not docker-compose build)
-# This avoids persistent cache issues with docker-compose
-Write-Host "Building frontend image..." -ForegroundColor Gray
 Push-Location frontend
-docker build --pull -t apranova-frontend:latest .
+docker build --no-cache --pull -t apranova-frontend:latest .
 $buildResult = $LASTEXITCODE
 Pop-Location
 
@@ -81,9 +102,9 @@ Write-Host "✅ Frontend built successfully!" -ForegroundColor Green
 Write-Host ""
 
 # ============================================
-# Step 5: Start all services
+# Step 4: Start all services
 # ============================================
-Write-Host "[5/6] Starting all services..." -ForegroundColor Yellow
+Write-Host "[4/9] Starting all services..." -ForegroundColor Yellow
 
 docker-compose -f docker-compose.complete.yml up -d
 
@@ -96,9 +117,9 @@ Write-Host "✅ All services started!" -ForegroundColor Green
 Write-Host ""
 
 # ============================================
-# Step 6: Run Database Migrations
+# Step 5: Run Database Migrations
 # ============================================
-Write-Host "[6/8] Running database migrations..." -ForegroundColor Yellow
+Write-Host "[5/9] Running database migrations..." -ForegroundColor Yellow
 
 docker exec apranova_backend python manage.py migrate --noinput
 
@@ -110,9 +131,9 @@ Write-Host "✅ Migrations completed!" -ForegroundColor Green
 Write-Host ""
 
 # ============================================
-# Step 7: Create Demo Users
+# Step 6: Create Demo Users
 # ============================================
-Write-Host "[7/8] Creating demo users..." -ForegroundColor Yellow
+Write-Host "[6/9] Creating demo users..." -ForegroundColor Yellow
 
 docker exec apranova_backend python manage.py create_demo_users
 
@@ -123,9 +144,9 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host ""
 
 # ============================================
-# Step 8: Wait for services to be healthy
+# Step 7: Wait for services to be healthy
 # ============================================
-Write-Host "[8/8] Waiting for services to be healthy..." -ForegroundColor Yellow
+Write-Host "[7/9] Waiting for services to be healthy..." -ForegroundColor Yellow
 Write-Host "This may take 30-60 seconds..." -ForegroundColor Gray
 
 Start-Sleep -Seconds 10
@@ -152,6 +173,64 @@ while ($attempt -lt $maxAttempts -and -not $backendHealthy) {
 
 if (-not $backendHealthy) {
     Write-Host "  ⚠️  Backend health check timed out, but it may still be starting..." -ForegroundColor Yellow
+}
+
+Write-Host ""
+
+# ============================================
+# Step 8: Test Signup API
+# ============================================
+Write-Host "[8/9] Testing signup API..." -ForegroundColor Yellow
+
+$testEmail = "test_$(Get-Random)@apranova.com"
+$testPassword = "Test@12345"
+
+try {
+    $signupData = @{
+        email = $testEmail
+        password1 = $testPassword
+        password2 = $testPassword
+        first_name = "Test"
+        last_name = "User"
+    } | ConvertTo-Json
+
+    $response = Invoke-WebRequest -Uri "http://localhost:8000/api/auth/registration/" `
+        -Method POST `
+        -Body $signupData `
+        -ContentType "application/json" `
+        -UseBasicParsing `
+        -TimeoutSec 10
+
+    if ($response.StatusCode -eq 201 -or $response.StatusCode -eq 200) {
+        Write-Host "  ✅ Signup API is working!" -ForegroundColor Green
+        Write-Host "  Test account created: $testEmail" -ForegroundColor Gray
+    }
+} catch {
+    Write-Host "  ⚠️  Signup API test failed, but continuing..." -ForegroundColor Yellow
+    Write-Host "  Error: $($_.Exception.Message)" -ForegroundColor Gray
+}
+
+Write-Host ""
+
+# ============================================
+# Step 9: Verify No Password Required for Workspace
+# ============================================
+Write-Host "[9/9] Verifying workspace configuration..." -ForegroundColor Yellow
+
+# Check if workspace_views.py has the correct configuration
+$workspaceViewsPath = "backend/accounts/workspace_views.py"
+$workspaceContent = Get-Content $workspaceViewsPath -Raw
+
+if ($workspaceContent -match 'environment=\{[^}]*"PASSWORD":\s*""') {
+    Write-Host "  ✅ Workspace password is disabled (PASSWORD='')" -ForegroundColor Green
+} else {
+    Write-Host "  ⚠️  Warning: Workspace password configuration may not be correct" -ForegroundColor Yellow
+}
+
+if ($workspaceContent -match '--auth.*none') {
+    Write-Host "  ✅ Workspace authentication is disabled (--auth none)" -ForegroundColor Green
+} else {
+    Write-Host "  ⚠️  Warning: Workspace auth configuration may not be correct" -ForegroundColor Yellow
 }
 
 Write-Host ""

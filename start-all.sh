@@ -28,9 +28,43 @@ fi
 cd "$(dirname "$0")"
 
 # ============================================
+# Step 0: Complete Cleanup (No Cache Issues!)
+# ============================================
+echo "[0/9] Performing complete cleanup..."
+echo "This ensures no cache issues on rebuild!"
+echo ""
+
+# Stop all containers
+echo "  → Stopping all ApraNova containers..."
+docker-compose -f docker-compose.complete.yml down 2>/dev/null || true
+
+# Remove all workspace containers
+echo "  → Removing all workspace containers..."
+docker ps -a --filter "name=workspace_" --format "{{.Names}}" | while read container; do
+    docker rm -f "$container" 2>/dev/null || true
+done
+
+# Remove all ApraNova images
+echo "  → Removing all ApraNova images..."
+docker rmi apranova-frontend:latest -f 2>/dev/null || true
+docker rmi apranova-backend:latest -f 2>/dev/null || true
+docker rmi apra-nova-code-server:latest -f 2>/dev/null || true
+
+# Prune build cache
+echo "  → Pruning Docker build cache..."
+docker builder prune -f 2>/dev/null || true
+
+# Prune dangling images
+echo "  → Pruning dangling images..."
+docker image prune -f 2>/dev/null || true
+
+echo "✅ Cleanup completed!"
+echo ""
+
+# ============================================
 # Step 1: Build Code-Server Image
 # ============================================
-echo "[1/6] Building Code-Server Image..."
+echo "[1/9] Building Code-Server Image..."
 echo "This may take 5-10 minutes on first run..."
 
 docker build -t apra-nova-code-server:latest ./backend/apra-nova-code-server
@@ -44,23 +78,17 @@ echo "✅ Code-Server image built successfully!"
 echo ""
 
 # ============================================
-# Step 2: Stop any existing containers
+# Step 2: Build Backend with Docker CLI
 # ============================================
-echo "[2/6] Stopping existing containers..."
+echo "[2/9] Building Backend with Docker-in-Docker support..."
+echo "Building with --no-cache to ensure fresh build..."
 
-docker-compose -f docker-compose.complete.yml down
+cd backend
+docker build --no-cache --pull -t apranova-backend:latest .
+buildResult=$?
+cd ..
 
-echo "✅ Existing containers stopped!"
-echo ""
-
-# ============================================
-# Step 3: Build Backend with Docker CLI
-# ============================================
-echo "[3/6] Building Backend with Docker-in-Docker support..."
-
-docker-compose -f docker-compose.complete.yml build backend
-
-if [ $? -ne 0 ]; then
+if [ $buildResult -ne 0 ]; then
     echo "❌ Failed to build backend!"
     exit 1
 fi
@@ -69,20 +97,13 @@ echo "✅ Backend built successfully!"
 echo ""
 
 # ============================================
-# Step 4: Build Frontend
+# Step 3: Build Frontend
 # ============================================
-echo "[4/6] Building Frontend..."
-echo "Using docker build directly to avoid cache issues..."
+echo "[3/9] Building Frontend..."
+echo "Building with --no-cache to ensure fresh build..."
 
-# Remove old frontend image to force fresh build
-echo "Removing old frontend image (if exists)..."
-docker rmi apranova-frontend:latest -f 2>/dev/null || true
-
-# Build using docker build directly (not docker-compose build)
-# This avoids persistent cache issues with docker-compose
-echo "Building frontend image..."
 cd frontend
-docker build --pull -t apranova-frontend:latest .
+docker build --no-cache --pull -t apranova-frontend:latest .
 buildResult=$?
 cd ..
 
@@ -95,9 +116,9 @@ echo "✅ Frontend built successfully!"
 echo ""
 
 # ============================================
-# Step 5: Start all services
+# Step 4: Start all services
 # ============================================
-echo "[5/6] Starting all services..."
+echo "[4/9] Starting all services..."
 
 docker-compose -f docker-compose.complete.yml up -d
 
@@ -110,9 +131,9 @@ echo "✅ All services started!"
 echo ""
 
 # ============================================
-# Step 6: Run Database Migrations
+# Step 5: Run Database Migrations
 # ============================================
-echo "[6/8] Running database migrations..."
+echo "[5/9] Running database migrations..."
 
 docker exec apranova_backend python manage.py migrate --noinput
 
@@ -124,9 +145,9 @@ echo "✅ Migrations completed!"
 echo ""
 
 # ============================================
-# Step 7: Create Demo Users
+# Step 6: Create Demo Users
 # ============================================
-echo "[7/8] Creating demo users..."
+echo "[6/9] Creating demo users..."
 
 docker exec apranova_backend python manage.py create_demo_users
 
@@ -137,9 +158,9 @@ fi
 echo ""
 
 # ============================================
-# Step 8: Wait for services to be healthy
+# Step 7: Wait for services to be healthy
 # ============================================
-echo "[8/8] Waiting for services to be healthy..."
+echo "[7/9] Waiting for services to be healthy..."
 echo "This may take 30-60 seconds..."
 
 sleep 10
@@ -163,6 +184,63 @@ done
 
 if [ "$backendHealthy" = false ]; then
     echo "  ⚠️  Backend health check timed out, but it may still be starting..."
+fi
+
+echo ""
+
+# ============================================
+# Step 8: Test Signup API
+# ============================================
+echo "[8/9] Testing signup API..."
+
+testEmail="test_$(date +%s)@apranova.com"
+testPassword="Test@12345"
+
+signupData=$(cat <<EOF
+{
+  "email": "$testEmail",
+  "password1": "$testPassword",
+  "password2": "$testPassword",
+  "first_name": "Test",
+  "last_name": "User"
+}
+EOF
+)
+
+response=$(curl -s -w "\n%{http_code}" -X POST \
+  -H "Content-Type: application/json" \
+  -d "$signupData" \
+  http://localhost:8000/api/auth/registration/ 2>/dev/null)
+
+httpCode=$(echo "$response" | tail -n1)
+
+if [ "$httpCode" = "201" ] || [ "$httpCode" = "200" ]; then
+    echo "  ✅ Signup API is working!"
+    echo "  Test account created: $testEmail"
+else
+    echo "  ⚠️  Signup API test failed (HTTP $httpCode), but continuing..."
+fi
+
+echo ""
+
+# ============================================
+# Step 9: Verify No Password Required for Workspace
+# ============================================
+echo "[9/9] Verifying workspace configuration..."
+
+# Check if workspace_views.py has the correct configuration
+workspaceViewsPath="backend/accounts/workspace_views.py"
+
+if grep -q 'environment=.*"PASSWORD":\s*""' "$workspaceViewsPath"; then
+    echo "  ✅ Workspace password is disabled (PASSWORD='')"
+else
+    echo "  ⚠️  Warning: Workspace password configuration may not be correct"
+fi
+
+if grep -q -- '--auth.*none' "$workspaceViewsPath"; then
+    echo "  ✅ Workspace authentication is disabled (--auth none)"
+else
+    echo "  ⚠️  Warning: Workspace auth configuration may not be correct"
 fi
 
 echo ""

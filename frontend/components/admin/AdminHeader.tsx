@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -87,17 +86,13 @@ export function AdminHeader({ activeTab, onTabChange, adminName = "Admin" }: Adm
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/admin/profile" className="cursor-pointer">
-                <User className="mr-2 h-4 w-4" />
-                Profile
-              </Link>
+            <DropdownMenuItem onClick={() => onTabChange?.("profile")} className="cursor-pointer">
+              <User className="mr-2 h-4 w-4" />
+              Profile
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/admin/settings" className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </Link>
+            <DropdownMenuItem onClick={() => onTabChange?.("settings")} className="cursor-pointer">
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">

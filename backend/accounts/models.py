@@ -33,7 +33,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ("student", "Student"),
-        ("teacher", "Teacher"),
+        ("trainer", "Trainer"),
         ("admin", "Admin"),
         ("superadmin", "SuperAdmin"),
     ]
@@ -45,6 +45,16 @@ class CustomUser(AbstractUser):
     profile_image = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # Trainer assignment for students (max 20 students per trainer)
+    assigned_trainer = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='students',
+        limit_choices_to={'role': 'trainer'}
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
@@ -53,3 +63,17 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+    
+    @property
+    def student_count(self):
+        """Get number of students assigned to this trainer"""
+        if self.role == 'trainer':
+            return self.students.filter(role='student').count()
+        return 0
+    
+    @property
+    def can_accept_students(self):
+        """Check if trainer can accept more students (max 20)"""
+        if self.role == 'trainer':
+            return self.student_count < 20
+        return False

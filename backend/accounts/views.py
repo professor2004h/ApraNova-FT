@@ -15,6 +15,32 @@ User = get_user_model()
 
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
+    
+    def perform_create(self, serializer):
+        """Override to get user instance after creation"""
+        user = super().perform_create(serializer)
+        # Store user for later use in create method
+        self._created_user = user
+        return user
+    
+    def create(self, request, *args, **kwargs):
+        """Override create to add trainer assignment status in response"""
+        response = super().create(request, *args, **kwargs)
+        
+        # Get the user that was just created
+        user = getattr(self, '_created_user', None)
+        
+        # Add trainer assignment info for students
+        if user and user.role == 'student':
+            if user.assigned_trainer:
+                response.data['trainer_assigned'] = True
+                response.data['trainer_name'] = user.assigned_trainer.name or user.assigned_trainer.email
+                response.data['message'] = f"Trainer {user.assigned_trainer.name or user.assigned_trainer.email} has been assigned to you"
+            else:
+                response.data['trainer_assigned'] = False
+                response.data['message'] = "Your account has been created. A trainer will be assigned to you soon"
+        
+        return response
 
 def get_tokens_for_user(user):
     """Generate JWT tokens for user"""
@@ -31,6 +57,50 @@ def get_user_profile(request):
     """Get current user profile"""
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_my_students(request):
+    """Get list of students assigned to the trainer"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"get_my_students called by user: {request.user.email}, role: {request.user.role}")
+    
+    if request.user.role != 'trainer':
+        logger.warning(f"Non-trainer tried to access: {request.user.email}")
+        return Response(
+            {"error": "Only trainers can access this endpoint"}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    # Get all students assigned to this trainer
+    students = User.objects.filter(
+        assigned_trainer=request.user,
+        role='student'
+    ).order_by('-created_at')
+    
+    logger.info(f"Found {students.count()} students for trainer {request.user.email}")
+    
+    # Serialize student data
+    students_data = []
+    for student in students:
+        students_data.append({
+            'id': student.id,
+            'name': student.name or student.username,
+            'email': student.email,
+            'track': student.track or 'Not Set',
+            'progress': 0,  # TODO: Calculate from actual progress
+            'status': 'Active',  # TODO: Calculate from last activity
+            'created_at': student.created_at.isoformat() if student.created_at else None,
+        })
+    
+    logger.info(f"Returning {len(students_data)} students")
+    return Response({
+        'count': len(students_data),
+        'students': students_data
+    })
 
 
 @api_view(["POST"])
@@ -101,7 +171,7 @@ def update_user_role(request):
     """Update user role (for testing/admin purposes)"""
     role = request.data.get("role")
 
-    if role not in ["student", "teacher", "admin", "superadmin"]:
+    if role not in ["student", "trainer", "admin", "superadmin"]:
         return Response({"error": "Invalid role"}, status=status.HTTP_400_BAD_REQUEST)
 
     request.user.role = role

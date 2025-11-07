@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
@@ -16,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { clearTokens, getRefreshToken } from "@/lib/auth"
 import { authService } from "@/services"
+import apiClient from "@/lib/apiClient"
 
 const tabs = [
   { href: "/student/dashboard", label: "Dashboard" },
@@ -26,6 +28,23 @@ const tabs = [
 export default function Header() {
   const pathname = usePathname()
   const router = useRouter()
+  const [userName, setUserName] = useState("Student")
+  const [userEmail, setUserEmail] = useState("")
+
+  useEffect(() => {
+    async function fetchUserProfile() {
+      try {
+        const response = await apiClient.get("/users/profile")
+        if (response.data) {
+          setUserName(response.data.name || response.data.username || "Student")
+          setUserEmail(response.data.email || "")
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error)
+      }
+    }
+    fetchUserProfile()
+  }, [])
 
   const handleLogout = async () => {
     const refreshToken = getRefreshToken();
@@ -71,11 +90,16 @@ export default function Header() {
             <DropdownMenuTrigger className="outline-none">
               <Avatar className="h-8 w-8">
                 <AvatarImage src="/placeholder-user.jpg" alt="Student avatar" />
-                <AvatarFallback>ST</AvatarFallback>
+                <AvatarFallback>{userName.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Student Name</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{userName}</p>
+                  {userEmail && <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>}
+                </div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link href="/student/profile">Profile</Link>

@@ -1,17 +1,19 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { User, Mail, Phone, MapPin, Calendar, Camera, Save, BookOpen } from "lucide-react"
+import { Calendar, Camera, Save, BookOpen, Home, Users, ListChecks } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useToast } from "@/hooks/use-toast"
 import apiClient from "@/lib/apiClient"
+import { TrainerHeader } from "@/components/trainer/TrainerHeader"
+import Link from "next/link"
+import { cn } from "@/lib/utils"
 
-export default function StudentProfilePage() {
+export default function TrainerProfilePage() {
   const { toast } = useToast()
   const [isSaving, setIsSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -19,18 +21,16 @@ export default function StudentProfilePage() {
   // Profile data
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
-  const [track, setTrack] = useState("")
   const [joinedDate, setJoinedDate] = useState("")
 
   useEffect(() => {
     async function fetchProfile() {
       try {
         const response = await apiClient.get("/users/profile")
-        console.log("Profile API response:", response.data)
+        console.log("Trainer Profile API response:", response.data)
         if (response.data) {
           setName(response.data.name || response.data.username || "")
           setEmail(response.data.email || "")
-          setTrack(response.data.track || "")
           
           // Format joined date
           if (response.data.created_at) {
@@ -50,7 +50,7 @@ export default function StudentProfilePage() {
       }
     }
     fetchProfile()
-  }, [])
+  }, [toast])
 
   const handleSaveProfile = () => {
     setIsSaving(true)
@@ -63,8 +63,62 @@ export default function StudentProfilePage() {
     }, 1000)
   }
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <TrainerHeader />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <p className="text-muted-foreground">Loading profile...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-4">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <TrainerHeader />
+
+      {/* Shell with Sidebar */}
+      <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-6 px-6 py-6 md:grid-cols-[240px_1fr]">
+        {/* Sidebar */}
+        <aside className="rounded-lg border bg-card p-3">
+          <Link href="/trainer/dashboard">
+            <div className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
+            )}>
+              <Home className="size-4" />
+              <span>Dashboard</span>
+            </div>
+          </Link>
+          <Link href="/trainer/students">
+            <div className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
+            )}>
+              <Users className="size-4" />
+              <span>My Students</span>
+            </div>
+          </Link>
+          <Link href="/trainer/submissions">
+            <div className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
+            )}>
+              <ListChecks className="size-4" />
+              <span>Submission Queue</span>
+            </div>
+          </Link>
+          <Link href="/trainer/schedule">
+            <div className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
+            )}>
+              <Calendar className="size-4" />
+              <span>Office Hours</span>
+            </div>
+          </Link>
+        </aside>
+
+        {/* Main Content */}
+        <div className="space-y-4">
       {/* Breadcrumbs */}
       <div className="text-sm text-muted-foreground">Dashboard / Profile</div>
 
@@ -80,7 +134,7 @@ export default function StudentProfilePage() {
           <div className="flex items-start gap-6">
             <div className="relative">
               <Avatar className="h-24 w-24">
-                <AvatarFallback className="text-2xl">{name ? name.slice(0, 2).toUpperCase() : "ST"}</AvatarFallback>
+                <AvatarFallback className="text-2xl">{name ? name.slice(0, 2).toUpperCase() : "TR"}</AvatarFallback>
               </Avatar>
               <Button
                 size="icon"
@@ -98,12 +152,10 @@ export default function StudentProfilePage() {
                   <Calendar className="h-4 w-4" />
                   Joined {joinedDate || "Recently"}
                 </div>
-                {track && (
-                  <div className="flex items-center gap-1">
-                    <BookOpen className="h-4 w-4" />
-                    Track: {track}
-                  </div>
-                )}
+                <div className="flex items-center gap-1">
+                  <BookOpen className="h-4 w-4" />
+                  Role: Trainer
+                </div>
               </div>
             </div>
           </div>
@@ -146,19 +198,10 @@ export default function StudentProfilePage() {
                 disabled
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="track">Track</Label>
-              <Input
-                id="track"
-                value={track}
-                onChange={(e) => setTrack(e.target.value)}
-                placeholder="Your learning track"
-                disabled
-              />
-            </div>
           </CardContent>
         </Card>
-
+      </div>
+        </div>
       </div>
     </div>
   )

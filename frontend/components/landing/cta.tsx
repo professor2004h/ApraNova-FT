@@ -49,9 +49,8 @@ export default function CTA() {
             </Button>
             <Button 
               size="lg" 
-              variant="outline"
               asChild
-              className="border-2 border-white text-white hover:bg-white/10 text-lg h-14 px-8"
+              className="bg-white/20 backdrop-blur-sm border-2 border-white/50 text-white hover:bg-white/30 text-lg h-14 px-8"
             >
               <Link href="/login">
                 Sign In

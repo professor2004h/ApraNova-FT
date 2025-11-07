@@ -8,20 +8,20 @@ export default function Footer() {
     product: [
       { label: "Features", href: "#features" },
       { label: "Tracks", href: "#tracks" },
-      { label: "Pricing", href: "#" },
-      { label: "FAQ", href: "#" },
+      { label: "Pricing", href: "/pricing" },
+      { label: "FAQ", href: "/faq" },
     ],
     company: [
-      { label: "About Us", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "About Us", href: "/about" },
+      { label: "Careers", href: "/careers" },
+      { label: "Blog", href: "/blog" },
+      { label: "Contact", href: "/contact" },
     ],
     legal: [
       { label: "Terms of Service", href: "/terms" },
-      { label: "Privacy Policy", href: "#" },
-      { label: "Cookie Policy", href: "#" },
-      { label: "Refund Policy", href: "#" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Cookie Policy", href: "/cookie-policy" },
+      { label: "Refund Policy", href: "/refund" },
     ],
   }
 

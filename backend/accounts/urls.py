@@ -4,6 +4,9 @@ from . import views, workspace_views
 
 urlpatterns = [
     path("profile/", views.get_user_profile, name="user-profile"),
+    path("profile", views.get_user_profile, name="user-profile-no-slash"),  # Without trailing slash
+    path("my-students/", views.get_my_students, name="my-students"),
+    path("my-students", views.get_my_students, name="my-students-no-slash"),  # Without trailing slash
     path("callback/", views.oauth_callback, name="oauth-callback"),
     path("update-role/", views.update_user_role, name="update-role"),
     path("login/", views.custom_login, name="custom_login"),

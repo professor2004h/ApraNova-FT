@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut, Settings, User, GraduationCap } from "lucide-react";
@@ -17,6 +18,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { clearTokens, getRefreshToken } from "@/lib/auth";
 import { authService } from "@/services";
 import { cn } from "@/lib/utils";
+import apiClient from "@/lib/apiClient";
 
 interface TrainerHeaderProps {
   activeTab?: string;
@@ -24,8 +26,25 @@ interface TrainerHeaderProps {
   trainerName?: string;
 }
 
-export function TrainerHeader({ activeTab, onTabChange, trainerName = "Trainer" }: TrainerHeaderProps) {
+export function TrainerHeader({ activeTab, onTabChange, trainerName: propTrainerName = "Trainer" }: TrainerHeaderProps) {
   const router = useRouter();
+  const [trainerName, setTrainerName] = useState(propTrainerName);
+  const [trainerEmail, setTrainerEmail] = useState("");
+
+  useEffect(() => {
+    async function fetchTrainerProfile() {
+      try {
+        const response = await apiClient.get("/users/profile");
+        if (response.data) {
+          setTrainerName(response.data.name || response.data.username || "Trainer");
+          setTrainerEmail(response.data.email || "");
+        }
+      } catch (error) {
+        console.error("Failed to fetch trainer profile:", error);
+      }
+    }
+    fetchTrainerProfile();
+  }, []);
 
   const handleLogout = async () => {
     const refreshToken = getRefreshToken();
@@ -43,10 +62,10 @@ export function TrainerHeader({ activeTab, onTabChange, trainerName = "Trainer" 
   };
 
   const tabs = [
-    { key: "dashboard", label: "Dashboard" },
-    { key: "students", label: "Students" },
-    { key: "submissions", label: "Submissions" },
-    { key: "schedule", label: "Schedule" },
+    { key: "dashboard", label: "Dashboard", href: "/trainer/dashboard" },
+    { key: "students", label: "Students", href: "/trainer/students" },
+    { key: "submissions", label: "Submissions", href: "/trainer/submissions" },
+    { key: "schedule", label: "Schedule", href: "/trainer/schedule" },
   ];
 
   return (
@@ -59,9 +78,9 @@ export function TrainerHeader({ activeTab, onTabChange, trainerName = "Trainer" 
         
         <nav className="flex items-center gap-2">
           {tabs.map((tab) => (
-            <button
+            <Link
               key={tab.key}
-              onClick={() => onTabChange?.(tab.key)}
+              href={tab.href}
               className={cn(
                 "rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 activeTab === tab.key ? "bg-primary/10 text-primary" : "hover:bg-muted"
@@ -69,7 +88,7 @@ export function TrainerHeader({ activeTab, onTabChange, trainerName = "Trainer" 
               aria-current={activeTab === tab.key ? "page" : undefined}
             >
               {tab.label}
-            </button>
+            </Link>
           ))}
         </nav>
         
@@ -80,7 +99,7 @@ export function TrainerHeader({ activeTab, onTabChange, trainerName = "Trainer" 
               <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src="/placeholder-trainer.jpg" alt={trainerName} />
-                  <AvatarFallback>TR</AvatarFallback>
+                  <AvatarFallback>{trainerName.slice(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -88,7 +107,7 @@ export function TrainerHeader({ activeTab, onTabChange, trainerName = "Trainer" 
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{trainerName}</p>
-                <p className="text-xs leading-none text-muted-foreground">Trainer</p>
+                {trainerEmail && <p className="text-xs leading-none text-muted-foreground">{trainerEmail}</p>}
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

@@ -240,9 +240,18 @@ export default function SignupForm() {
         track: role === "student" ? track : undefined,
         role,
       }
-      await createAccount(payload)
+      const response = await createAccount(payload)
 
-      setSuccessMsg("Account created! Redirecting to your dashboard...")
+      // Show trainer assignment message for students
+      if (role === "student" && response) {
+        if (response.trainer_assigned) {
+          setSuccessMsg(`Account created! Trainer "${response.trainer_name}" has been assigned to you. Redirecting...`)
+        } else {
+          setSuccessMsg("Account created! A trainer will be assigned to you soon. Redirecting...")
+        }
+      } else {
+        setSuccessMsg("Account created! Redirecting to your dashboard...")
+      }
 
       const target =
         role === "admin"
@@ -254,7 +263,7 @@ export default function SignupForm() {
       setTimeout(() => {
         // In real flow: redirect to Stripe then back via /auth/callback
         router.push(target)
-      }, 1000)
+      }, 3000)
     } catch (err: any) {
       // Extract error message using utility
       const { title, message, fieldErrors } = extractErrorMessage(err);

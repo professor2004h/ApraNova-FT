@@ -122,4 +122,5 @@ urlpatterns = [
     path("api/auth/social/", include("allauth.socialaccount.urls")),
     path("api/users/", include("accounts.urls")),
     path("api/payments/", include("payments.urls")),
+    path("api/curriculum/", include("curriculum.urls")),
 ]

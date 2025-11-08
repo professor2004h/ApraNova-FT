@@ -1,9 +1,13 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import AutoSaveIndicator from "@/components/student/auto-save-indicator"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   ArrowRight,
   Clock,
@@ -14,7 +18,9 @@ import {
   Upload,
   MessageCircle,
   ExternalLink,
+  UserCheck,
 } from "lucide-react"
+import apiClient from "@/lib/apiClient"
 
 function formatDate() {
   const d = new Date()
@@ -23,6 +29,35 @@ function formatDate() {
 
 export default function StudentDashboardPage() {
   const progress = 45
+  const [trainerInfo, setTrainerInfo] = useState<{ name: string; email: string } | null>(null)
+  const [studentName, setStudentName] = useState("Student")
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchUserProfile() {
+      try {
+        const response = await apiClient.get("/users/profile")
+        
+        // Set student name
+        if (response.data.name || response.data.username) {
+          setStudentName(response.data.name || response.data.username)
+        }
+        
+        // Set trainer info
+        if (response.data.assigned_trainer) {
+          setTrainerInfo({
+            name: response.data.assigned_trainer.name || response.data.assigned_trainer.email,
+            email: response.data.assigned_trainer.email
+          })
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchUserProfile()
+  }, [])
 
   return (
     <div className="space-y-6">
@@ -35,7 +70,7 @@ export default function StudentDashboardPage() {
       <Card>
         <CardHeader className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <CardTitle className="text-balance">Welcome back, Student!</CardTitle>
+            <CardTitle className="text-balance">Welcome back, {studentName}!</CardTitle>
             <CardDescription>{formatDate()}</CardDescription>
           </div>
           <Button asChild>
@@ -46,6 +81,28 @@ export default function StudentDashboardPage() {
           </Button>
         </CardHeader>
       </Card>
+
+      {/* Trainer Info */}
+      {!loading && trainerInfo && (
+        <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/30">
+          <UserCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <AlertDescription className="text-blue-900 dark:text-blue-100">
+            <span className="font-medium">Your Trainer:</span> {trainerInfo.name}
+            {trainerInfo.name !== trainerInfo.email && (
+              <span className="text-sm text-blue-700 dark:text-blue-300"> ({trainerInfo.email})</span>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {!loading && !trainerInfo && (
+        <Alert className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30">
+          <UserCheck className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          <AlertDescription className="text-amber-900 dark:text-amber-100">
+            A trainer will be assigned to you soon.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Main grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

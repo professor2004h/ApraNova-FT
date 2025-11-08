@@ -78,6 +78,12 @@ def create_workspace(request):
         workspace_base = os.getenv("WORKSPACE_BASE_PATH", "/app/workspaces")
         user_volume = f"{workspace_base}/{user.id}"
         Path(user_volume).mkdir(parents=True, exist_ok=True)
+        
+        # Set permissions for coder user (UID 1000 in code-server container)
+        # This ensures the coder user can write to the workspace
+        import subprocess
+        subprocess.run(["chown", "-R", "1000:1000", user_volume], check=False)
+        subprocess.run(["chmod", "-R", "755", user_volume], check=False)
 
         # Use localhost URL for development
         use_localhost = os.getenv("DEBUG", "False").lower() == "true"

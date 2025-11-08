@@ -25,6 +25,17 @@ import {
   Undo2,
   Cloud,
   Database,
+  User,
+  Phone,
+  MapPin,
+  Calendar,
+  Shield,
+  Camera,
+  Save,
+  Lock,
+  Bell,
+  EyeOff,
+  Globe,
 } from "lucide-react"
 import { AdminHeader } from "@/components/admin/AdminHeader"
 import { Badge } from "@/components/ui/badge"
@@ -83,7 +94,7 @@ const CHART_COLORS = [
   "hsl(var(--chart-5))",
 ]
 
-type TabKey = "dashboard" | "users" | "batches" | "payments" | "system"
+type TabKey = "dashboard" | "users" | "batches" | "payments" | "system" | "settings" | "profile"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabKey>("dashboard")
@@ -515,7 +526,7 @@ export default function AdminDashboard() {
             <Button variant="outline" onClick={() => t("Export Reports", "CSV export started")}>
               <Download className="mr-2 size-4" /> Export Reports
             </Button>
-            <Button variant="ghost" onClick={() => t("System Settings", "Open settings panel")}>
+            <Button variant="ghost" onClick={() => setActiveTab("settings")}>
               <Settings className="mr-2 size-4" /> System Settings
             </Button>
           </div>
@@ -1800,6 +1811,473 @@ export default function AdminDashboard() {
     )
   }
 
+  // Profile View
+  function ProfileView() {
+    const [isSaving, setIsSaving] = useState(false)
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+    const [showNewPassword, setShowNewPassword] = useState(false)
+    const [name, setName] = useState("Admin User")
+    const [email, setEmail] = useState("admin@apranova.com")
+    const [phone, setPhone] = useState("+1 (555) 987-6543")
+    const [location, setLocation] = useState("San Francisco, USA")
+    const [bio, setBio] = useState("Administrator managing the Apra Nova platform")
+    const [currentPassword, setCurrentPassword] = useState("")
+    const [newPassword, setNewPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
+    const [emailNotifications, setEmailNotifications] = useState(true)
+    const [pushNotifications, setPushNotifications] = useState(true)
+    const [securityAlerts, setSecurityAlerts] = useState(true)
+
+    const handleSaveProfile = () => {
+      setIsSaving(true)
+      setTimeout(() => {
+        setIsSaving(false)
+        t("Profile Updated", "Your profile has been updated successfully")
+      }, 1000)
+    }
+
+    const handleChangePassword = () => {
+      if (newPassword !== confirmPassword) {
+        t("Error", "New passwords do not match")
+        return
+      }
+      t("Password Changed", "Your password has been updated successfully")
+      setCurrentPassword("")
+      setNewPassword("")
+      setConfirmPassword("")
+    }
+
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold">Profile</h2>
+          <p className="text-muted-foreground">Manage your personal information and preferences</p>
+        </div>
+
+        {/* Profile Header Card */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-6">
+              <div className="relative">
+                <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center text-2xl font-bold">
+                  AD
+                </div>
+                <Button size="icon" variant="secondary" className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
+                  <Camera className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-2xl font-bold">{name}</h3>
+                  <Badge variant="secondary" className="bg-blue-500/10 text-blue-600">
+                    <Shield className="mr-1 h-3 w-3" />
+                    Admin
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Mail className="h-4 w-4" />
+                    {email}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    Joined Jan 2024
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Personal Information */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Personal Information</CardTitle>
+                <CardDescription>Update your personal details</CardDescription>
+              </div>
+              <Button onClick={handleSaveProfile} disabled={isSaving}>
+                <Save className="mr-2 h-4 w-4" />
+                {isSaving ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="pl-9" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-9" />
+                </div>
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="pl-9" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} className="pl-9" />
+                </div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bio">Bio</Label>
+              <Textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} rows={3} />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Security */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5" />
+              Security
+            </CardTitle>
+            <CardDescription>Manage your password and security settings</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Current Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type={showCurrentPassword ? "text" : "password"}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="pl-9 pr-9"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1 h-8 w-8"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                >
+                  {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>New Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type={showNewPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="pl-9 pr-9"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1 h-8 w-8"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                  >
+                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Confirm Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+            </div>
+            <Button onClick={handleChangePassword} variant="outline">
+              Change Password
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Notifications */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bell className="h-5 w-5" />
+              Notification Preferences
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label>Email Notifications</Label>
+                <p className="text-sm text-muted-foreground">Receive notifications via email</p>
+              </div>
+              <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <Label>Push Notifications</Label>
+                <p className="text-sm text-muted-foreground">Receive push notifications</p>
+              </div>
+              <Switch checked={pushNotifications} onCheckedChange={setPushNotifications} />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <Label>Security Alerts</Label>
+                <p className="text-sm text-muted-foreground">Get notified about security events</p>
+              </div>
+              <Switch checked={securityAlerts} onCheckedChange={setSecurityAlerts} />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Settings View
+  function SettingsView() {
+    const [isSaving, setIsSaving] = useState(false)
+    const [siteName, setSiteName] = useState("Apra Nova")
+    const [siteDescription, setSiteDescription] = useState("Professional learning platform")
+    const [maintenanceMode, setMaintenanceMode] = useState(false)
+    const [emailNotifications, setEmailNotifications] = useState(true)
+    const [userRegistrationNotif, setUserRegistrationNotif] = useState(true)
+    const [paymentNotif, setPaymentNotif] = useState(true)
+    const [sessionTimeout, setSessionTimeout] = useState("30")
+    const [passwordExpiry, setPasswordExpiry] = useState("90")
+    const [twoFactorRequired, setTwoFactorRequired] = useState(false)
+    const [smtpHost, setSmtpHost] = useState("smtp.gmail.com")
+    const [smtpPort, setSmtpPort] = useState("587")
+    const [smtpUser, setSmtpUser] = useState("")
+
+    const handleSaveSettings = () => {
+      setIsSaving(true)
+      setTimeout(() => {
+        setIsSaving(false)
+        t("Settings Saved", "Your settings have been updated successfully")
+      }, 1000)
+    }
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold">Settings</h2>
+            <p className="text-muted-foreground">Manage platform configuration</p>
+          </div>
+          <Button onClick={handleSaveSettings} disabled={isSaving}>
+            <Save className="mr-2 h-4 w-4" />
+            {isSaving ? "Saving..." : "Save All Changes"}
+          </Button>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* General Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5" />
+                General Settings
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Site Name</Label>
+                <Input value={siteName} onChange={(e) => setSiteName(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Site Description</Label>
+                <Textarea value={siteDescription} onChange={(e) => setSiteDescription(e.target.value)} rows={3} />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Maintenance Mode</Label>
+                  <p className="text-sm text-muted-foreground">Restrict access to platform</p>
+                </div>
+                <Switch checked={maintenanceMode} onCheckedChange={setMaintenanceMode} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Notification Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Bell className="h-5 w-5" />
+                Notifications
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Email Notifications</Label>
+                  <p className="text-sm text-muted-foreground">Enable email notifications</p>
+                </div>
+                <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>User Registration Alerts</Label>
+                  <p className="text-sm text-muted-foreground">Get notified on new users</p>
+                </div>
+                <Switch checked={userRegistrationNotif} onCheckedChange={setUserRegistrationNotif} />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Payment Notifications</Label>
+                  <p className="text-sm text-muted-foreground">Get notified about payments</p>
+                </div>
+                <Switch checked={paymentNotif} onCheckedChange={setPaymentNotif} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Security Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Lock className="h-5 w-5" />
+                Security
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Require 2FA</Label>
+                  <p className="text-sm text-muted-foreground">Force all users to enable 2FA</p>
+                </div>
+                <Switch checked={twoFactorRequired} onCheckedChange={setTwoFactorRequired} />
+              </div>
+              <div className="space-y-2">
+                <Label>Session Timeout</Label>
+                <Select value={sessionTimeout} onValueChange={setSessionTimeout}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="15">15 minutes</SelectItem>
+                    <SelectItem value="30">30 minutes</SelectItem>
+                    <SelectItem value="60">1 hour</SelectItem>
+                    <SelectItem value="120">2 hours</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Password Expiry</Label>
+                <Select value={passwordExpiry} onValueChange={setPasswordExpiry}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30 days</SelectItem>
+                    <SelectItem value="60">60 days</SelectItem>
+                    <SelectItem value="90">90 days</SelectItem>
+                    <SelectItem value="never">Never</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Email Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Email Configuration
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 grid-cols-2">
+                <div className="space-y-2">
+                  <Label>SMTP Host</Label>
+                  <Input value={smtpHost} onChange={(e) => setSmtpHost(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>SMTP Port</Label>
+                  <Input value={smtpPort} onChange={(e) => setSmtpPort(e.target.value)} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>SMTP Username</Label>
+                <Input value={smtpUser} onChange={(e) => setSmtpUser(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>SMTP Password</Label>
+                <Input type="password" placeholder="••••••••" />
+              </div>
+              <Button variant="outline" size="sm">
+                Test Connection
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Database Settings */}
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="h-5 w-5" />
+                Database
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Database Backup</Label>
+                    <p className="text-sm text-muted-foreground">Last: 2 hours ago</p>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    Backup Now
+                  </Button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Optimization</Label>
+                    <p className="text-sm text-muted-foreground">Optimize tables</p>
+                  </div>
+                  <Button variant="outline" size="sm">
+                    Optimize
+                  </Button>
+                </div>
+                <div>
+                  <Label>Database Stats</Label>
+                  <div className="text-sm space-y-1 mt-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Size:</span>
+                      <span className="font-medium">12.3 GB</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Tables:</span>
+                      <span className="font-medium">45</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* Header */}
@@ -1842,7 +2320,18 @@ export default function AdminDashboard() {
             active={activeTab === "system"}
             onClick={() => setActiveTab("system")}
           />
-          <SidebarItem icon={<Settings className="size-4" />} label="Settings" onClick={() => t("Open Settings")} />
+          <SidebarItem
+            icon={<User className="size-4" />}
+            label="Profile"
+            active={activeTab === "profile"}
+            onClick={() => setActiveTab("profile")}
+          />
+          <SidebarItem
+            icon={<Settings className="size-4" />}
+            label="Settings"
+            active={activeTab === "settings"}
+            onClick={() => setActiveTab("settings")}
+          />
         </aside>
 
         {/* Content */}
@@ -1852,6 +2341,8 @@ export default function AdminDashboard() {
           {activeTab === "batches" && <BatchesView />}
           {activeTab === "payments" && <PaymentsView />}
           {activeTab === "system" && <SystemView />}
+          {activeTab === "profile" && <ProfileView />}
+          {activeTab === "settings" && <SettingsView />}
         </main>
       </div>
     </div>

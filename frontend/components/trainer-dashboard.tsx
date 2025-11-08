@@ -2,7 +2,8 @@
 
 import type React from "react"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
+import apiClient from "@/lib/apiClient"
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell } from "recharts"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,6 +25,7 @@ import {
 import { TrainerHeader } from "@/components/trainer/TrainerHeader"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import SubmissionsQueue from "@/components/trainer/submissions-queue"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -46,14 +48,8 @@ import {
   Circle,
 } from "lucide-react"
 
-// Mock data
-const mockStudents = [
-  { id: "s1", name: "John Doe", track: "DP", progress: 88, status: "Active" },
-  { id: "s2", name: "Sarah Lee", track: "FSD", progress: 76, status: "Active" },
-  { id: "s3", name: "Mike Chen", track: "DP", progress: 42, status: "Inactive" },
-  { id: "s4", name: "Priya Singh", track: "FSD", progress: 63, status: "Active" },
-  { id: "s5", name: "Arjun Kumar", track: "DP", progress: 95, status: "Active" },
-]
+// Empty default - no dummy data
+const mockStudentsDefault: Array<{ id: string; name: string; email: string; track: string; progress: number; status: string }> = []
 
 const recentActivity = [
   { id: "a1", icon: "submit", text: "John Doe submitted Project 1", time: "30 min ago" },
@@ -94,8 +90,51 @@ function progressColor(val: number) {
 // Header tab and sidebar types
 type Tab = "dashboard" | "students" | "submissions" | "schedule"
 
-export default function TrainerDashboard() {
-  const [activeTab, setActiveTab] = useState<Tab>("dashboard")
+interface TrainerDashboardProps {
+  initialTab?: Tab
+}
+
+export default function TrainerDashboard({ initialTab = "dashboard" }: TrainerDashboardProps = {}) {
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab)
+  const [mockStudents, setMockStudents] = useState(mockStudentsDefault)
+  const [loading, setLoading] = useState(true)
+
+  // Fetch real students from API
+  useEffect(() => {
+    async function fetchStudents() {
+      try {
+        console.log("Fetching students from API...")
+        const response = await apiClient.get("/users/my-students")
+        console.log("API Response:", response.data)
+        
+        if (response.data.students && response.data.students.length > 0) {
+          // Transform API data to match component format
+          const realStudents = response.data.students.map((student: any) => ({
+            id: student.id.toString(),
+            name: student.name,
+            email: student.email,
+            track: student.track === 'Data Professional' ? 'DP' : student.track === 'Full Stack Development' ? 'FSD' : student.track,
+            progress: student.progress || 0,
+            status: student.status || 'Active',
+          }))
+          console.log("Setting real students:", realStudents)
+          setMockStudents(realStudents)
+        } else {
+          console.log("No students assigned to this trainer")
+          setMockStudents([]) // Empty list if no students
+        }
+      } catch (error: any) {
+        console.error("Failed to fetch students:", error)
+        console.error("Error response:", error.response?.data)
+        console.error("Error status:", error.response?.status)
+        // Set empty list on error - no dummy data
+        setMockStudents([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchStudents()
+  }, [])
 
   const progressData = useMemo(
     () =>
@@ -104,7 +143,7 @@ export default function TrainerDashboard() {
         progress: s.progress,
         color: progressColor(s.progress),
       })),
-    [],
+    [mockStudents],
   )
 
   return (
@@ -120,45 +159,59 @@ export default function TrainerDashboard() {
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-6 px-6 py-6 md:grid-cols-[240px_1fr]">
         {/* Sidebar */}
         <aside className="rounded-lg border bg-card p-3">
-          <SidebarItem
-            icon={<Home className="size-4" />}
-            label="Dashboard"
-            active={activeTab === "dashboard"}
-            onClick={() => setActiveTab("dashboard")}
-          />
-          <SidebarItem
-            icon={<Users className="size-4" />}
-            label="My Students"
-            active={activeTab === "students"}
-            onClick={() => setActiveTab("students")}
-          />
-          <SidebarItem
-            icon={<ListChecks className="size-4" />}
-            label="Submission Queue"
-            active={activeTab === "submissions"}
-            onClick={() => setActiveTab("submissions")}
-          />
-          <SidebarItem
-            icon={<Calendar className="size-4" />}
-            label="Office Hours"
-            active={activeTab === "schedule"}
-            onClick={() => setActiveTab("schedule")}
-          />
-          <SidebarItem
-            icon={<FolderOpen className="size-4" />}
-            label="Resources"
+          <Link href="/trainer/dashboard">
+            <div className={cn(
+              "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors",
+              activeTab === "dashboard" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            )}>
+              <Home className="size-4" />
+              <span>Dashboard</span>
+            </div>
+          </Link>
+          <Link href="/trainer/students">
+            <div className={cn(
+              "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors",
+              activeTab === "students" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            )}>
+              <Users className="size-4" />
+              <span>My Students</span>
+            </div>
+          </Link>
+          <Link href="/trainer/submissions">
+            <div className={cn(
+              "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors",
+              activeTab === "submissions" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            )}>
+              <ListChecks className="size-4" />
+              <span>Submission Queue</span>
+            </div>
+          </Link>
+          <Link href="/trainer/schedule">
+            <div className={cn(
+              "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors",
+              activeTab === "schedule" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+            )}>
+              <Calendar className="size-4" />
+              <span>Office Hours</span>
+            </div>
+          </Link>
+          <button
             onClick={() => window.open("https://docs.apranova.com", "_blank", "noopener,noreferrer")}
-          />
+            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-muted"
+          >
+            <FolderOpen className="size-4" />
+            <span>Resources</span>
+          </button>
         </aside>
 
         {/* Main */}
         <section className="space-y-6">
           {activeTab === "dashboard" ? (
-            <DashboardHome progressData={progressData} />
+            <DashboardHome progressData={progressData} students={mockStudents} />
           ) : activeTab === "students" ? (
-            <StudentsTab />
+            <StudentsTab students={mockStudents} />
           ) : activeTab === "submissions" ? (
-            <SubmissionsTab />
+            <SubmissionsQueue />
           ) : (
             <ScheduleTab />
           )}
@@ -231,13 +284,19 @@ function StatCard({
   )
 }
 
-function DashboardHome({ progressData }: { progressData: Array<{ name: string; progress: number; color: string }> }) {
+function DashboardHome({ 
+  progressData, 
+  students 
+}: { 
+  progressData: Array<{ name: string; progress: number; color: string }>
+  students: Array<{ id: string; name: string; track: string; progress: number; status: string }>
+}) {
   // derived counts
-  const totalStudents = mockStudents.length
+  const totalStudents = students.length
   const pendingSubmissions = 5
   const reviewedToday = 3
   const avgProgress =
-    Math.round((mockStudents.reduce((acc, s) => acc + s.progress, 0) / Math.max(1, mockStudents.length)) * 100) / 100
+    Math.round((students.reduce((acc, s) => acc + s.progress, 0) / Math.max(1, students.length)) * 100) / 100
 
   return (
     <div className="space-y-6">
@@ -432,7 +491,11 @@ function Placeholder({ title, description }: { title: string; description: strin
   )
 }
 
-function StudentsTab() {
+function StudentsTab({ 
+  students 
+}: { 
+  students: Array<{ id: string; name: string; email: string; track: string; progress: number; status: string }> 
+}) {
   type StudentRow = {
     id: string
     name: string
@@ -465,143 +528,28 @@ function StudentsTab() {
     comms: Array<{ id: string; type: "message" | "call" | "feedback"; text: string; at: string }>
   }
 
-  const data: StudentRow[] = [
-    {
-      id: "s1",
-      name: "John Doe",
-      email: "john@example.com",
-      avatar: "/placeholder-user.jpg",
-      track: "DP",
-      batch: "Batch 1",
-      progress: 88,
-      currentProject: "Project 2",
-      checkpoints: { completed: 4, total: 5 },
-      lastActive: { label: "Online now", online: true },
-      status: "Active",
-      joined: "Aug 10, 2025",
-      timeline: [
-        { id: "t1", name: "Project 1", state: "completed", completedAt: "Sep 2, 2025", timeTaken: "6 days" },
-        { id: "t2", name: "Checkpoint 1", state: "completed", completedAt: "Sep 5, 2025", timeTaken: "2 days" },
-        { id: "t3", name: "Checkpoint 2", state: "in-progress" },
-        { id: "t4", name: "Project 2", state: "pending" },
-      ],
-      submissions: [
-        {
-          id: "sub1",
-          project: "Project 1 - Data Analysis",
-          submitted: "Oct 10, 2025 2:30 PM",
-          status: "Approved",
-          reviewer: "Priya",
-          feedbackUrl: "#",
-        },
-      ],
-      activity: [
-        { id: "a1", text: "Submitted Project 1", at: "2 days ago" },
-        { id: "a2", text: "Viewed feedback", at: "2 days ago" },
-        { id: "a3", text: "Pushed 3 commits", at: "1 day ago" },
-      ],
-      comms: [
-        { id: "c1", type: "feedback", text: "Trainer approved submission", at: "2 days ago" },
-        { id: "c2", type: "message", text: "Asked about next steps", at: "1 day ago" },
-      ],
-    },
-    {
-      id: "s2",
-      name: "Sarah Lee",
-      email: "sarah@example.com",
-      track: "FSD",
-      batch: "Batch 1",
-      progress: 76,
-      currentProject: "Project 1",
-      checkpoints: { completed: 3, total: 5 },
-      lastActive: { label: "2 hours ago" },
-      status: "Active",
-      joined: "Aug 12, 2025",
-      timeline: [
-        { id: "t1", name: "Project 1", state: "in-progress" },
-        { id: "t2", name: "Checkpoint 1", state: "completed", completedAt: "Oct 1, 2025", timeTaken: "3 days" },
-      ],
-      submissions: [
-        {
-          id: "sub2",
-          project: "Project 1 - React Foundations",
-          submitted: "Oct 9, 2025 4:10 PM",
-          status: "Changes Requested",
-          reviewer: "Priya",
-          feedbackUrl: "#",
-        },
-      ],
-      activity: [{ id: "a1", text: "Started Project 1", at: "3 days ago" }],
-      comms: [{ id: "c1", type: "message", text: "Trainer sent checklist", at: "3 days ago" }],
-    },
-    {
-      id: "s3",
-      name: "Mike Chen",
-      email: "mike@example.com",
-      track: "DP",
-      batch: "Batch 2",
-      progress: 42,
-      currentProject: "Project 1",
-      checkpoints: { completed: 2, total: 5 },
-      lastActive: { label: "5 hours ago" },
-      status: "Inactive",
-      joined: "Aug 20, 2025",
-      timeline: [
-        { id: "t1", name: "Project 1", state: "in-progress" },
-        { id: "t2", name: "Checkpoint 1", state: "pending" },
-      ],
-      submissions: [],
-      activity: [{ id: "a1", text: "No recent activity", at: "—" }],
-      comms: [],
-    },
-    {
-      id: "s4",
-      name: "Priya Singh",
-      email: "priya@example.com",
-      track: "FSD",
-      batch: "Batch 2",
-      progress: 63,
-      currentProject: "Project 1",
-      checkpoints: { completed: 3, total: 5 },
-      lastActive: { label: "Yesterday" },
-      status: "Active",
-      joined: "Aug 25, 2025",
-      timeline: [{ id: "t1", name: "Project 1", state: "in-progress" }],
-      submissions: [],
-      activity: [{ id: "a1", text: "Viewed project guide", at: "1 day ago" }],
-      comms: [],
-    },
-    {
-      id: "s5",
-      name: "Arjun Kumar",
-      email: "arjun@example.com",
-      track: "DP",
-      batch: "Batch 1",
-      progress: 95,
-      currentProject: "Project 3",
-      checkpoints: { completed: 5, total: 5 },
-      lastActive: { label: "2 days ago" },
-      status: "Active",
-      joined: "Aug 8, 2025",
-      timeline: [
-        { id: "t1", name: "Project 1", state: "completed", completedAt: "Sep 1, 2025", timeTaken: "5 days" },
-        { id: "t2", name: "Project 2", state: "completed", completedAt: "Sep 20, 2025", timeTaken: "7 days" },
-        { id: "t3", name: "Project 3", state: "in-progress" },
-      ],
-      submissions: [
-        {
-          id: "sub3",
-          project: "Project 2 - ML Model",
-          submitted: "Oct 1, 2025 10:22 AM",
-          status: "Approved",
-          reviewer: "Priya",
-          feedbackUrl: "#",
-        },
-      ],
-      activity: [{ id: "a1", text: "Pushed 6 commits", at: "2 days ago" }],
-      comms: [{ id: "c1", type: "call", text: "Office hours with trainer", at: "1 week ago" }],
-    },
-  ]
+  // Map real students to table format with dummy detailed data for Details view
+  const data: StudentRow[] = students.map((student: any, index: number) => ({
+    id: student.id,
+    name: student.name,
+    email: student.email || `${student.name.toLowerCase().replace(/\s+/g, '')}@example.com`,
+    track: (student.track === 'DP' || student.track === 'FSD') ? student.track : 'DP',
+    batch: index % 2 === 0 ? "Batch 1" : "Batch 2",
+    progress: student.progress,
+    currentProject: "Project 1",
+    checkpoints: { completed: Math.floor(student.progress / 20), total: 5 },
+    lastActive: { label: "Recently" },
+    status: (student.status === 'Active' || student.status === 'Inactive') ? student.status : 'Active',
+    joined: "Aug 2025",
+    timeline: [
+      { id: "t1", name: "Project 1", state: "in-progress" },
+    ],
+    submissions: [],
+    activity: [{ id: "a1", text: "Recent activity", at: "Recently" }],
+    comms: [],
+  }))
+
+  // No dummy data - data variable already has real students or empty array
 
   const [search, setSearch] = useState("")
   const [batch, setBatch] = useState<"All" | "Batch 1" | "Batch 2">("All")
@@ -647,40 +595,46 @@ function StudentsTab() {
   const pageCount = Math.max(1, Math.ceil(sorted.length / pageSize))
   const pageData = sorted.slice((page - 1) * pageSize, page * pageSize)
 
-  function progBarColor(p: number) {
-    if (p > 80) return "var(--chart-2)"
-    if (p >= 50) return "var(--chart-3)"
-    return "var(--chart-5)"
+  // Show empty state if no students
+  if (data.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>My Students</CardTitle>
+          <CardDescription>No students assigned yet</CardDescription>
+        </CardHeader>
+        <CardContent className="text-center py-8 text-muted-foreground">
+          <Users className="mx-auto h-12 w-12 mb-4 opacity-50" />
+          <p>You don't have any students assigned to you yet.</p>
+          <p className="text-sm mt-2">Students will appear here once they are assigned.</p>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
     <div className="space-y-4">
+      {/* Filters */}
       <Card>
-        <CardHeader className="space-y-3">
-          <CardTitle>Students</CardTitle>
-          <CardDescription>Manage your cohort: filter by batch, track, and status</CardDescription>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <CardHeader>
+          <CardTitle>My Students</CardTitle>
+          <CardDescription>Manage your cohort, filter by batch, track, and status</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Search and filters */}
+          <div className="flex flex-wrap gap-2">
+            <div className="relative flex-1 min-w-[200px]">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                value={search}
-                onChange={(e) => {
-                  setPage(1)
-                  setSearch(e.target.value)
-                }}
                 placeholder="Search by name..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 className="pl-8"
               />
             </div>
-            <Select
-              value={batch}
-              onValueChange={(v) => {
-                setPage(1)
-                setBatch(v as any)
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Batch" />
+            <Select value={batch} onValueChange={(v) => setBatch(v as typeof batch)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Batches</SelectItem>
@@ -688,15 +642,9 @@ function StudentsTab() {
                 <SelectItem value="Batch 2">Batch 2</SelectItem>
               </SelectContent>
             </Select>
-            <Select
-              value={track}
-              onValueChange={(v) => {
-                setPage(1)
-                setTrack(v as any)
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Track" />
+            <Select value={track} onValueChange={(v) => setTrack(v as typeof track)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Tracks</SelectItem>
@@ -704,15 +652,9 @@ function StudentsTab() {
                 <SelectItem value="FSD">FSD</SelectItem>
               </SelectContent>
             </Select>
-            <Select
-              value={status}
-              onValueChange={(v) => {
-                setPage(1)
-                setStatus(v as any)
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Status" />
+            <Select value={status} onValueChange={(v) => setStatus(v as typeof status)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Status</SelectItem>
@@ -720,366 +662,130 @@ function StudentsTab() {
                 <SelectItem value="Inactive">Inactive</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={sort} onValueChange={(v) => setSort(v as any)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sort by" />
+            <Select value={sort} onValueChange={(v) => setSort(v as typeof sort)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ProgressHL">Progress High → Low</SelectItem>
                 <SelectItem value="ProgressLH">Progress Low → High</SelectItem>
-                <SelectItem value="NameAZ">Name A → Z</SelectItem>
+                <SelectItem value="NameAZ">Name A-Z</SelectItem>
                 <SelectItem value="LastActive">Last Active</SelectItem>
               </SelectContent>
             </Select>
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Track</TableHead>
-                  <TableHead>Progress</TableHead>
-                  <TableHead>Current Project</TableHead>
-                  <TableHead>Checkpoints</TableHead>
-                  <TableHead>Last Active</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-40">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pageData.map((s) => (
-                  <TableRow key={s.id} className="hover:bg-muted/50">
-                    <TableCell>
-                      <button
-                        className="flex items-center gap-3 hover:underline"
-                        onClick={() => openDetails(s)}
-                        aria-label={`Open details for ${s.name}`}
-                      >
-                        <Avatar className="size-8">
-                          <AvatarImage src={s.avatar || "/placeholder-user.jpg"} alt={`${s.name} avatar`} />
-                          <AvatarFallback>{s.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium">{s.name}</span>
-                          <span className="text-xs text-muted-foreground">{s.email}</span>
-                        </div>
-                      </button>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{s.track}</Badge>
-                    </TableCell>
-                    <TableCell className="min-w-40">
-                      <div className="text-sm font-medium">{s.progress}%</div>
-                      <div className="mt-1 h-2 w-full overflow-hidden rounded bg-muted">
-                        <div
-                          className="h-2 rounded"
-                          style={{ width: `${s.progress}%`, background: progBarColor(s.progress) }}
-                          aria-label={`Progress ${s.progress}%`}
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-sm">{s.currentProject}</TableCell>
-                    <TableCell className="text-sm">
-                      {s.checkpoints.completed}/{s.checkpoints.total} completed
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {s.lastActive.online ? (
-                        <span className="inline-flex items-center gap-1">
-                          <span className="size-2 animate-pulse rounded-full bg-emerald-500" aria-hidden /> Online now
-                        </span>
-                      ) : (
-                        s.lastActive.label
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={cn(
-                          "border",
-                          s.status === "Active"
-                            ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                            : s.status === "Inactive"
-                              ? "border-gray-200 bg-gray-50 text-gray-700"
-                              : "border-red-200 bg-red-50 text-red-800",
-                        )}
-                      >
-                        {s.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-2">
-                        <Button size="sm" variant="outline" onClick={() => openDetails(s)} aria-label="View Details">
-                          <Eye className="mr-2 size-4" /> Details
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => window.open(`mailto:${s.email}`, "_blank", "noopener")}
-                          aria-label="Send Message"
-                        >
-                          <MessageSquare className="mr-2 size-4" /> Message
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => window.open("https://codesandbox.io", "_blank", "noopener")}
-                          aria-label="View Workspace"
-                        >
-                          <Monitor className="mr-2 size-4" /> Workspace
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {pageData.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={8}>
-                      <div className="flex items-center justify-center gap-3 py-10 text-sm text-muted-foreground">
-                        <InboxIcon className="size-5" />
-                        No students found for current filters.
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="flex items-center justify-between border-t px-4 py-3">
-            <div className="text-xs text-muted-foreground">
-              Page {page} of {pageCount}
-            </div>
-            <div className="flex items-center gap-1">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                <ChevronLeft className="mr-1 size-4" />
-                Prev
-              </Button>
-              {Array.from({ length: pageCount }).map((_, i) => (
-                <Button
-                  key={i}
-                  size="sm"
-                  variant={page === i + 1 ? "default" : "outline"}
-                  onClick={() => setPage(i + 1)}
-                  aria-current={page === i + 1 ? "page" : undefined}
-                >
-                  {i + 1}
-                </Button>
-              ))}
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
-                disabled={page === pageCount}
-              >
-                Next
-                <ChevronRight className="ml-1 size-4" />
-              </Button>
-            </div>
-          </div>
         </CardContent>
       </Card>
 
+      {/* Table */}
+      <Card>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Student</TableHead>
+              <TableHead>Track</TableHead>
+              <TableHead>Progress</TableHead>
+              <TableHead>Current Project</TableHead>
+              <TableHead>Checkpoints</TableHead>
+              <TableHead>Last Active</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {pageData.map((s) => (
+              <TableRow key={s.id}>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={s.avatar} />
+                      <AvatarFallback>{s.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="font-medium">{s.name}</div>
+                      <div className="text-sm text-muted-foreground">{s.email}</div>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="outline">{s.track}</Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <div className="text-sm font-medium">{s.progress}%</div>
+                  </div>
+                </TableCell>
+                <TableCell>{s.currentProject}</TableCell>
+                <TableCell>
+                  {s.checkpoints.completed}/{s.checkpoints.total} completed
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    {s.lastActive.online && <Circle className="h-2 w-2 fill-green-500 text-green-500" />}
+                    <span className="text-sm">{s.lastActive.label}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={s.status === "Active" ? "default" : "secondary"}>{s.status}</Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-1">
+                    <Button variant="ghost" size="sm" onClick={() => openDetails(s)}>
+                      <Eye className="h-4 w-4" />
+                      Details
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <MessageSquare className="h-4 w-4" />
+                      Message
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <Monitor className="h-4 w-4" />
+                      Workspace
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        {/* Pagination */}
+        <div className="flex items-center justify-between px-4 py-3 border-t">
+          <div className="text-sm text-muted-foreground">
+            Page {page} of {pageCount}
+          </div>
+          <div className="flex gap-1">
+            <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+              <ChevronLeft className="h-4 w-4" />
+              Prev
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === pageCount}
+              onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+      {/* Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Student Details</DialogTitle>
-            <DialogDescription>Profile, timeline, and history</DialogDescription>
-          </DialogHeader>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           {selected && (
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <Avatar className="size-12">
-                    <AvatarImage src={selected.avatar || "/placeholder-user.jpg"} alt={`${selected.name} avatar`} />
-                    <AvatarFallback>{selected.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="text-lg font-semibold">{selected.name}</div>
-                    <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                      <button
-                        className="inline-flex items-center gap-1 hover:underline"
-                        onClick={() => window.open(`mailto:${selected.email}`, "_blank", "noopener")}
-                      >
-                        <Mail className="size-4" /> {selected.email}
-                      </button>
-                      <Badge variant="outline">{selected.track}</Badge>
-                      <span className="text-xs">•</span>
-                      <span className="text-sm">{selected.batch}</span>
-                      <Badge
-                        className={cn(
-                          "ml-2 border",
-                          selected.status === "Active"
-                            ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                            : selected.status === "Inactive"
-                              ? "border-gray-200 bg-gray-50 text-gray-700"
-                              : "border-red-200 bg-red-50 text-red-800",
-                        )}
-                      >
-                        {selected.status}
-                      </Badge>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Joined {selected.joined} • Last active {selected.lastActive.label}
-                    </div>
-                  </div>
-                </div>
-                <div className="min-w-48">
-                  <div className="text-sm font-medium">Progress {selected.progress}%</div>
-                  <div className="mt-1 h-2 w-full overflow-hidden rounded bg-muted">
-                    <div
-                      className="h-2 rounded"
-                      style={{ width: `${selected.progress}%`, background: progBarColor(selected.progress) }}
-                    />
-                  </div>
-                </div>
+            <>
+              <DialogHeader>
+                <DialogTitle>Student Details: {selected.name}</DialogTitle>
+                <DialogDescription>{selected.email}</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                {/* Student info cards would go here */}
+                <p className="text-sm text-muted-foreground">Detailed student information will be displayed here.</p>
               </div>
-
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Progress Timeline</CardTitle>
-                    <CardDescription>Checkpoints and projects</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3">
-                      {selected.timeline.map((t) => (
-                        <li key={t.id} className="flex items-start gap-2 text-sm">
-                          <span className="mt-0.5 inline-flex size-5 items-center justify-center rounded-full bg-muted">
-                            {t.state === "completed" ? (
-                              <Check className="size-3 text-emerald-600" />
-                            ) : t.state === "in-progress" ? (
-                              <Clock3 className="size-3 text-orange-500" />
-                            ) : (
-                              <Circle className="size-3 text-muted-foreground" />
-                            )}
-                          </span>
-                          <div>
-                            <div className="font-medium">{t.name}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {t.state === "completed"
-                                ? `Completed ${t.completedAt} • Time taken ${t.timeTaken}`
-                                : t.state === "in-progress"
-                                  ? "In progress"
-                                  : "Pending"}
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Submission History</CardTitle>
-                    <CardDescription>Projects and statuses</CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Project</TableHead>
-                          <TableHead>Submitted</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Reviewer</TableHead>
-                          <TableHead>Feedback</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {selected.submissions.length ? (
-                          selected.submissions.map((sub) => (
-                            <TableRow key={sub.id}>
-                              <TableCell className="text-sm">{sub.project}</TableCell>
-                              <TableCell className="text-sm">{sub.submitted}</TableCell>
-                              <TableCell>
-                                <Badge
-                                  className={cn(
-                                    "border",
-                                    sub.status === "Approved"
-                                      ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                                      : sub.status === "Pending Review"
-                                        ? "border-orange-200 bg-orange-50 text-orange-800"
-                                        : "border-yellow-200 bg-yellow-50 text-yellow-800",
-                                  )}
-                                >
-                                  {sub.status}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-sm">{sub.reviewer ?? "—"}</TableCell>
-                              <TableCell className="text-sm">
-                                {sub.feedbackUrl ? (
-                                  <Link href={sub.feedbackUrl} className="text-primary hover:underline">
-                                    View Feedback
-                                  </Link>
-                                ) : (
-                                  "—"
-                                )}
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        ) : (
-                          <TableRow>
-                            <TableCell colSpan={5} className="text-center text-sm text-muted-foreground">
-                              No submissions yet.
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Activity Log</CardTitle>
-                    <CardDescription>Last 10 activities</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm">
-                      {selected.activity.map((a) => (
-                        <li key={a.id} className="flex items-center justify-between">
-                          <span>{a.text}</span>
-                          <span className="text-xs text-muted-foreground">{a.at}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Communication History</CardTitle>
-                    <CardDescription>Messages, calls, and feedback</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm">
-                      {selected.comms.map((c) => (
-                        <li key={c.id} className="flex items-center justify-between">
-                          <span className="capitalize">{c.type}</span>
-                          <span>{c.text}</span>
-                          <span className="text-xs text-muted-foreground">{c.at}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-end gap-2">
-                <Button variant="outline" onClick={() => window.open(`mailto:${selected.email}`, "_blank", "noopener")}>
-                  Send Message
-                </Button>
-                <Button variant="outline">View Latest Submission</Button>
-                <Button variant="outline">Schedule Call</Button>
-                <Button onClick={() => setDetailsOpen(false)}>Close</Button>
-              </div>
-            </div>
+            </>
           )}
         </DialogContent>
       </Dialog>

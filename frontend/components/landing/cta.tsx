@@ -6,19 +6,11 @@ import { ArrowRight, Sparkles } from "lucide-react"
 
 export default function CTA() {
   return (
-    <section className="py-24 relative overflow-hidden">
-      {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-600" />
-      <div className="absolute inset-0 bg-grid-white/10" />
-      
-      {/* Animated Orbs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse delay-1000" />
-
+    <section className="py-24 relative overflow-hidden bg-blue-900">
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full border border-white/30">
             <Sparkles className="h-4 w-4 text-white" />
             <span className="text-sm font-medium text-white">Limited Time Offer</span>
           </div>
@@ -37,20 +29,20 @@ export default function CTA() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               asChild
-              className="bg-white text-purple-600 hover:bg-gray-100 text-lg h-14 px-8"
+              className="bg-white text-blue-900 hover:bg-gray-100 text-lg h-14 px-8 w-full sm:w-auto"
             >
               <Link href="/signup">
                 Start Learning Today
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               asChild
-              className="bg-white/20 backdrop-blur-sm border-2 border-white/50 text-white hover:bg-white/30 text-lg h-14 px-8"
+              className="bg-white/20 border-2 border-white/50 text-white hover:bg-white/30 text-lg h-14 px-8 w-full sm:w-auto"
             >
               <Link href="/login">
                 Sign In

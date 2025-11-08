@@ -33,20 +33,20 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="bg-gray-50 dark:bg-gray-900 border-t">
+    <footer className="bg-gray-900 dark:bg-black border-t border-gray-800">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
           {/* Brand */}
           <div className="col-span-2">
             <Link href="/" className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">A</span>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold text-white">
                 ApraNova
               </span>
             </Link>
-            <p className="text-muted-foreground mb-4 max-w-xs">
+            <p className="text-gray-400 mb-4 max-w-xs">
               Empowering the next generation of tech professionals with cloud-based learning.
             </p>
             {/* Social Links */}
@@ -58,7 +58,7 @@ export default function Footer() {
                     key={index}
                     href={social.href}
                     aria-label={social.label}
-                    className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center hover:bg-purple-600 hover:text-white transition-colors"
+                    className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-900 hover:text-white transition-colors text-gray-400"
                   >
                     <Icon className="h-5 w-5" />
                   </a>
@@ -69,13 +69,13 @@ export default function Footer() {
 
           {/* Product Links */}
           <div>
-            <h3 className="font-semibold mb-4">Product</h3>
+            <h3 className="font-semibold mb-4 text-white">Product</h3>
             <ul className="space-y-2">
               {footerLinks.product.map((link, index) => (
                 <li key={index}>
                   <a
                     href={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors"
                   >
                     {link.label}
                   </a>
@@ -86,13 +86,13 @@ export default function Footer() {
 
           {/* Company Links */}
           <div>
-            <h3 className="font-semibold mb-4">Company</h3>
+            <h3 className="font-semibold mb-4 text-white">Company</h3>
             <ul className="space-y-2">
               {footerLinks.company.map((link, index) => (
                 <li key={index}>
                   <a
                     href={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors"
                   >
                     {link.label}
                   </a>
@@ -103,13 +103,13 @@ export default function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
+            <h3 className="font-semibold mb-4 text-white">Legal</h3>
             <ul className="space-y-2">
               {footerLinks.legal.map((link, index) => (
                 <li key={index}>
                   <Link
                     href={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-gray-400 hover:text-white transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -120,11 +120,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
+        <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-gray-400">
             © {new Date().getFullYear()} ApraNova. All rights reserved.
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-gray-400">
             Made with ❤️ for aspiring developers
           </p>
         </div>

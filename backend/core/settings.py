@@ -40,8 +40,8 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="apra-nova-backend-main.onrender.com,localhost,backend,169.254.172.3,.amplifyapp.com,127.0.0.1,8saxivdpb6.ap-south-1.awsapprunner.com").split(",")
 
-# Disable automatic slash appending to allow URLs with or without trailing slashes
-APPEND_SLASH = False
+# Enable automatic slash appending for better URL handling
+APPEND_SLASH = True
 
 # Application definition
 
@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     # Your custom apps
     "accounts",
+    "curriculum",
     # stripe
     "payments",
 ]

@@ -3,14 +3,14 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, BookOpen, Rocket, Upload, HelpCircle } from "lucide-react"
+import { LayoutDashboard, BookOpen, Rocket, Upload, HelpCircle, FileCheck } from "lucide-react"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 const items = [
   { href: "/student/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/student/project-guide", label: "Project Guide", icon: BookOpen },
+  { href: "/student/submissions", label: "My Submissions", icon: FileCheck },
   { href: "/student/workspace", label: "Launch Workspace", icon: Rocket },
-  { href: "/student/submit", label: "Submit Project", icon: Upload },
   { href: "/student/help", label: "Help & Support", icon: HelpCircle },
 ]
 

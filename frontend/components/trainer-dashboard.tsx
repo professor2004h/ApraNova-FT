@@ -25,6 +25,7 @@ import {
 import { TrainerHeader } from "@/components/trainer/TrainerHeader"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import SubmissionsQueue from "@/components/trainer/submissions-queue"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -210,7 +211,7 @@ export default function TrainerDashboard({ initialTab = "dashboard" }: TrainerDa
           ) : activeTab === "students" ? (
             <StudentsTab students={mockStudents} />
           ) : activeTab === "submissions" ? (
-            <SubmissionsTab />
+            <SubmissionsQueue />
           ) : (
             <ScheduleTab />
           )}
